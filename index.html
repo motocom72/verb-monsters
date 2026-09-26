@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#E6F3FA">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="動詞モンスター">
+<title>不規則動詞モンスター</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#E6F3FA; --grass:#CFEBC4; --grass-deep:#A9D697;
+  --ink:#4A3A34; --ink-soft:#7B6A62; --card:#FFFFFF; --line:#E3DCD6;
+  --pink:#F07A98; --pink-soft:#FDE3EA; --ok:#4E9F5B; --ok-soft:#E3F4E4;
+  --ng:#D0564F; --ng-soft:#FBE4E2; --cue:#FFE08A; --btn:#FFF7E8;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --sky:#1E2B3A; --grass:#2E4A33; --grass-deep:#3D6242;
+    --ink:#F2EAE4; --ink-soft:#C3B6AE; --card:#2A2F38; --line:#454B55;
+    --pink:#F58FA9; --pink-soft:#4A2E37; --ok:#7CCB88; --ok-soft:#24392A;
+    --ng:#F08A83; --ng-soft:#46292A; --cue:#7A6320; --btn:#353A44;
+  }
+}
+:root[data-theme="dark"]{
+  --sky:#1E2B3A; --grass:#2E4A33; --grass-deep:#3D6242;
+  --ink:#F2EAE4; --ink-soft:#C3B6AE; --card:#2A2F38; --line:#454B55;
+  --pink:#F58FA9; --pink-soft:#4A2E37; --ok:#7CCB88; --ok-soft:#24392A;
+  --ng:#F08A83; --ng-soft:#46292A; --cue:#7A6320; --btn:#353A44;
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0;height:100%}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--sky);color:var(--ink);font-family:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Arial Rounded MT Bold",sans-serif;font-size:17px;line-height:1.6;-webkit-tap-highlight-color:transparent}
+#app{max-width:480px;margin:0 auto;padding:12px 16px 24px;min-height:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px}
+.link{background:none;border:none;padding:8px 4px;color:var(--ink-soft);font-weight:700}
+.chip{font-size:14px;color:var(--ink-soft);font-weight:700}
+h1{font-size:28px;font-weight:800;line-height:1.25;margin:20px 0 4px;letter-spacing:.02em}
+.sub{color:var(--ink-soft);margin:0 0 16px}
+.field{position:relative;background:var(--grass);border-radius:28px 28px 12px 12px;padding:16px 8px 10px;text-align:center;overflow:hidden}
+.field::after{content:"";position:absolute;left:-10%;right:-10%;bottom:-30px;height:60px;background:var(--grass-deep);border-radius:50%;opacity:.5}
+.field svg{position:relative;z-index:1}
+.parade{display:flex;justify-content:center;gap:2px}
+.parade svg{width:25%;max-width:96px;height:auto}
+.btn{display:block;width:100%;min-height:52px;border:2px solid var(--ink);border-radius:16px;background:var(--pink);color:#fff;font-weight:800;font-size:18px;padding:10px 16px;margin-top:12px;box-shadow:0 4px 0 var(--ink)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.sec{background:var(--btn);color:var(--ink)}
+.stats{display:flex;gap:10px;margin-top:16px}
+.stat{flex:1;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.stat b{display:block;font-size:24px;font-weight:800}
+.stat span{font-size:13px;color:var(--ink-soft)}
+.mon{width:180px;height:auto;max-width:60%}
+.mon.evolve{animation:evolve .7s ease-out}
+.mon.flee{animation:flee .8s ease-in forwards}
+.mon.appear{animation:appear .5s ease-out}
+@keyframes evolve{0%{transform:scale(.7);filter:brightness(1.8)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes flee{0%{transform:translateX(0)}20%{transform:translateX(-8px) translateY(-6px)}100%{transform:translateX(140%);opacity:0}}
+@keyframes appear{0%{transform:translateY(24px);opacity:0}100%{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.mon.evolve,.mon.flee,.mon.appear{animation:none}}
+.word{position:relative;z-index:1;font-size:26px;font-weight:800;margin-top:2px;letter-spacing:.03em}
+.forms{position:relative;z-index:1;font-size:14px;color:var(--ink-soft);min-height:22px}
+.hearts{position:relative;z-index:1;display:flex;justify-content:center;gap:4px;margin-top:4px}
+.hearts i{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.55);border:1.5px solid var(--ink-soft)}
+.hearts i.on{background:var(--pink);border-color:var(--pink)}
+.tag{display:inline-block;font-size:13px;font-weight:700;background:var(--card);border-radius:999px;padding:2px 10px;margin-bottom:4px;position:relative;z-index:1}
+.q{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:14px 16px;margin-top:14px}
+.q h2{font-size:17px;font-weight:700;margin:0 0 8px;color:var(--ink-soft)}
+.sent{font-size:19px;line-height:1.7;margin:0}
+.blank{display:inline-block;min-width:4.5em;border-bottom:3px solid var(--pink);text-align:center;font-weight:800;color:var(--pink)}
+.ans{font-weight:800;color:var(--ok);border-bottom:3px solid var(--ok);padding:0 2px}
+mark.cue{background:var(--cue);color:inherit;border-radius:4px;padding:0 2px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.opt{min-height:56px;border:2px solid var(--line);border-radius:14px;background:var(--btn);font-size:19px;font-weight:700;padding:8px}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--ng);background:var(--ng-soft)}
+.slots{display:flex;flex-wrap:wrap;gap:6px;min-height:52px;margin-top:12px;padding:6px;border:2px dashed var(--line);border-radius:14px}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;justify-content:center}
+.tile{width:46px;height:50px;border:2px solid var(--ink);border-radius:12px;background:var(--card);font-size:22px;font-weight:800;box-shadow:0 3px 0 var(--ink)}
+.tile[disabled]{opacity:.2;box-shadow:none}
+.slot{width:40px;height:40px;border:none;border-radius:10px;background:var(--pink-soft);font-size:20px;font-weight:800}
+.row{display:flex;gap:10px}
+.row .btn{margin-top:10px}
+input.type{width:100%;min-height:54px;margin-top:12px;border:2px solid var(--ink);border-radius:14px;padding:8px 14px;font:inherit;font-size:22px;font-weight:700;background:var(--card);color:var(--ink)}
+.err{color:var(--ng);font-size:14px;min-height:20px;margin-top:4px}
+.hint{background:var(--pink-soft);border-radius:12px;padding:8px 12px;margin-top:10px;font-size:15px}
+.fb{border-radius:16px;padding:12px 16px;margin-top:12px;border:2px solid}
+.fb.ok{background:var(--ok-soft);border-color:var(--ok)}
+.fb.ng{background:var(--ng-soft);border-color:var(--ng)}
+.fb .head{font-weight:800;font-size:19px;margin:0 0 4px}
+.fb p{margin:4px 0}
+.fb .ja{color:var(--ink-soft);font-size:15px}
+.dex{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.cell{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:6px 4px 8px;text-align:center}
+.cell svg{width:100%;height:auto}
+.cell b{display:block;font-size:15px}
+.cell small{display:block;font-size:12px;color:var(--ink-soft);line-height:1.3}
+.cell.gold{border-color:#E2B33C;box-shadow:inset 0 0 0 2px #F6D77A}
+.cell.unknown{opacity:.55}
+.sp{margin:18px 0 4px;font-size:18px;font-weight:800}
+.sp small{font-weight:400;color:var(--ink-soft);font-size:14px;margin-left:6px}
+.note{font-size:14px;color:var(--ink-soft);margin:6px 2px 0}
+.prog{height:10px;border-radius:999px;background:var(--card);border:2px solid var(--line);overflow:hidden;margin:4px 0 12px}
+.prog i{display:block;height:100%;background:var(--pink);transition:width .3s}
+.big{font-size:40px;font-weight:800;text-align:center;margin:4px 0 0;letter-spacing:.03em}
+.bigm{text-align:center;color:var(--ink-soft);margin:0 0 6px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair label{font-size:14px;font-weight:700;color:var(--ink-soft)}
+.pair input.type{margin-top:4px;font-size:20px}
+.pair input.right{border-color:var(--ok);background:var(--ok-soft)}
+.pair input.wrong{border-color:var(--ng);background:var(--ng-soft)}
+.miss{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 14px;margin-top:10px}
+.miss li{margin:2px 0}
+.fl{display:block;font-size:14px;font-weight:700;color:var(--ink-soft);margin-top:8px}
+input.type.sm{font-size:17px;min-height:46px;margin-top:4px}
+.sel{display:block;width:100%;min-height:46px;margin-top:4px;border:2px solid var(--ink);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;font-size:16px;padding:6px 10px}
+.chart{display:flex;align-items:flex-end;gap:3px;height:120px;margin-top:6px}
+.bcol{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
+.bar2{width:100%;background:var(--pink-soft);border-radius:4px 4px 0 0;display:flex;flex-direction:column;justify-content:flex-end;min-height:2px}
+.bok{background:var(--ok);border-radius:4px 4px 0 0}
+.bcol small{font-size:11px;color:var(--ink-soft)}
+.rank{margin:4px 0 0;padding-left:1.4em}
+.wl{margin-top:12px}
+.wrow{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 10px;margin-top:8px}
+.wrow.off{opacity:.55}
+.wrow small{color:var(--ink-soft);font-size:12px}
+.wbtn{display:flex;gap:6px;flex-shrink:0}
+.mini{min-height:40px;min-width:56px;border:2px solid var(--line);border-radius:10px;background:var(--btn);font-weight:700;font-size:14px}
+.gap{color:var(--ink-soft);font-size:15px}
+.prevline{color:var(--ink-soft);font-size:15px;margin:0 0 8px;padding-bottom:8px;border-bottom:1px dashed var(--line)}
+.q .ja{color:var(--ink-soft);font-size:15px;margin:4px 0 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.toggles{display:flex;gap:8px;margin-top:12px}
+.tg{flex:1;min-height:44px;border:2px solid var(--line);border-radius:12px;background:var(--card);font-weight:700;font-size:15px}
+.tg[aria-pressed="true"]{border-color:var(--pink);background:var(--pink-soft)}
+.reveal{display:flex;justify-content:center;align-items:flex-end;gap:4px;position:relative;z-index:1}
+.reveal figure{margin:0;width:32%}
+.reveal svg{width:100%;height:auto}
+.reveal figcaption{font-weight:800;font-size:17px}
+.reveal figure:nth-child(2) svg{animation-delay:.35s}
+.reveal figure:nth-child(3) svg{animation-delay:.7s}
+.reveal svg.appear{animation-fill-mode:both}
+.who{position:relative;z-index:1;font-weight:800;font-size:18px;margin-top:4px}
+.who small{display:block;font-weight:400;font-size:14px;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div id="app" aria-live="polite"></div>
+<script>
+"use strict";
+
+/* ---------- 単語データ（最初の30語） ---------- */
+const BASE = [
+ {b:"go",p:"went",pp:"gone",m:"行く",
+  pe:{t:"We {} to Kyoto on a school trip last year.",ja:"去年、修学旅行で京都に行った。",c:["last year"],g:"past"},
+  ppe:{t:"All the students had {} home when I returned.",ja:"私が戻ったとき、生徒はみんなもう帰っていた。",c:["had","returned"],g:"pastPerfect"}},
+ {b:"see",p:"saw",pp:"seen",m:"見る",
+  pe:{t:"I {} a rainbow on my way home yesterday.",ja:"昨日、帰り道で虹を見た。",c:["yesterday"],g:"past"},
+  ppe:{t:"Mt. Fuji can be {} from this window.",ja:"この窓から富士山が見える。",c:["can be"],g:"modalPassive"}},
+ {b:"come",p:"came",pp:"come",m:"来る",
+  pe:{t:"Spring {} early last year.",ja:"去年は春が早く来た。",c:["last year"],g:"past"},
+  ppe:{t:"Winter has {}, so it's time to get out our coats.",ja:"冬が来たので、コートを出す時期だ。",c:["has"],g:"perfect"}},
+ {b:"say",p:"said",pp:"said",m:"言う",
+  pe:{t:"He {} that he would call me later.",ja:"彼は後で電話すると言った。",c:["would"],g:"agree"},
+  ppe:{t:"It is {} that this lake never freezes.",ja:"この湖は決して凍らないと言われている。",c:["It is"],g:"passive"}},
+ {b:"take",p:"took",pp:"taken",m:"取る・撮る",
+  pe:{t:"I {} a lot of pictures during the trip last summer.",ja:"去年の夏の旅行中、たくさん写真を撮った。",c:["last summer"],g:"past"},
+  ppe:{t:"This photo was {} in Hokkaido.",ja:"この写真は北海道で撮られた。",c:["was"],g:"passive"}},
+ {b:"make",p:"made",pp:"made",m:"作る",
+  pe:{t:"She {} a birthday cake for her brother yesterday.",ja:"彼女は昨日、弟のために誕生日ケーキを作った。",c:["yesterday"],g:"past"},
+  ppe:{t:"This bag is {} of recycled plastic.",ja:"このバッグはリサイクルプラスチックでできている。",c:["is"],g:"passive"}},
+ {b:"give",p:"gave",pp:"given",m:"与える",
+  pe:{t:"My grandmother {} me a watch last year.",ja:"去年、祖母が腕時計をくれた。",c:["last year"],g:"past"},
+  ppe:{t:"I was {} a second chance.",ja:"私はもう一度チャンスを与えられた。",c:["was"],g:"passive"}},
+ {b:"know",p:"knew",pp:"known",m:"知っている",
+  pe:{t:"I {} the answer, but I was too shy to say it.",ja:"答えは分かっていたが、恥ずかしくて言えなかった。",c:["was"],g:"agree"},
+  ppe:{t:"She is {} as a great singer.",ja:"彼女は素晴らしい歌手として知られている。",c:["is","as"],g:"passive"}},
+ {b:"find",p:"found",pp:"found",m:"見つける",
+  pe:{t:"I {} my lost key under the sofa an hour ago.",ja:"1時間前、ソファの下でなくした鍵を見つけた。",c:["ago"],g:"past"},
+  ppe:{t:"The ring {} on the beach belonged to a tourist.",ja:"浜辺で見つかった指輪は観光客のものだった。",c:["The ring"],g:"participle"}},
+ {b:"eat",p:"ate",pp:"eaten",m:"食べる",
+  pe:{t:"We {} sushi for dinner last night.",ja:"昨夜、夕食に寿司を食べた。",c:["last night"],g:"past"},
+  ppe:{t:"Rice is {} in many parts of Asia.",ja:"米はアジアの多くの地域で食べられている。",c:["is"],g:"passive"}},
+ {b:"put",p:"put",pp:"put",m:"置く",
+  pe:{t:"Last night, she {} her phone on the desk.",ja:"昨夜、彼女は机の上に携帯を置いた。",c:["Last night"],g:"past"},
+  ppe:{t:"The books have been {} back on the shelves.",ja:"本は棚に戻されている。",c:["have been"],g:"perfectPassive"}},
+ {b:"buy",p:"bought",pp:"bought",m:"買う",
+  pe:{t:"My father {} a new car last month.",ja:"父は先月、新しい車を買った。",c:["last month"],g:"past"},
+  ppe:{t:"Have you ever {} anything online?",ja:"ネットで何かを買ったことはありますか？",c:["Have","ever"],g:"perfect"}},
+ {b:"run",p:"ran",pp:"run",m:"走る・経営する",
+  pe:{t:"I {} to school this morning because I woke up late.",ja:"寝坊したので、今朝は学校まで走った。",c:["this morning","woke"],g:"past"},
+  ppe:{t:"He has {} the restaurant for ten years.",ja:"彼は10年間そのレストランを経営している。",c:["has","for ten years"],g:"perfect"}},
+ {b:"cut",p:"cut",pp:"cut",m:"切る",
+  pe:{t:"I {} my finger while I was cooking last night.",ja:"昨夜、料理中に指を切った。",c:["last night"],g:"past"},
+  ppe:{t:"The cake was {} into eight pieces.",ja:"ケーキは8つに切り分けられた。",c:["was"],g:"passive"}},
+ {b:"think",p:"thought",pp:"thought",m:"思う",
+  pe:{t:"I {} the test would be easy, but it wasn't.",ja:"テストは簡単だろうと思ったが、そうではなかった。",c:["would","wasn't"],g:"agree"},
+  ppe:{t:"It is {} that the castle was built 400 years ago.",ja:"その城は400年前に建てられたと考えられている。",c:["It is"],g:"passive"}},
+ {b:"have",p:"had",pp:"had",m:"持っている・食べる",
+  pe:{t:"We {} a great time at the festival last weekend.",ja:"先週末、お祭りでとても楽しい時間を過ごした。",c:["last weekend"],g:"past"},
+  ppe:{t:"I had never {} Thai food before I visited Bangkok.",ja:"バンコクを訪れるまで、タイ料理を食べたことがなかった。",c:["had never"],g:"pastPerfect"}},
+ {b:"bring",p:"brought",pp:"brought",m:"持ってくる",
+  pe:{t:"He {} his dog to the party yesterday.",ja:"彼は昨日、パーティーに犬を連れてきた。",c:["yesterday"],g:"past"},
+  ppe:{t:"The food {} from home tasted great.",ja:"家から持ってきた食べ物はとてもおいしかった。",c:["The food"],g:"participle"}},
+ {b:"become",p:"became",pp:"become",m:"〜になる",
+  pe:{t:"She {} a doctor in 2019.",ja:"彼女は2019年に医者になった。",c:["in 2019"],g:"past"},
+  ppe:{t:"The song has {} popular among young people.",ja:"その歌は若者の間で人気になっている。",c:["has"],g:"perfect"}},
+ {b:"read",p:"read",pp:"read",m:"読む",
+  pe:{t:"I {} an interesting article about space yesterday.",ja:"昨日、宇宙についての面白い記事を読んだ。",c:["yesterday"],g:"past"},
+  ppe:{t:"This novel has been {} by millions of people.",ja:"この小説は何百万人もの人に読まれてきた。",c:["has been","by"],g:"perfectPassive"}},
+ {b:"tell",p:"told",pp:"told",m:"伝える",
+  pe:{t:"Yesterday, my teacher {} me to practice more.",ja:"昨日、先生にもっと練習するように言われた。",c:["Yesterday"],g:"past"},
+  ppe:{t:"I was {} that the store closes at nine.",ja:"その店は9時に閉まると言われた。",c:["was"],g:"passive"}},
+ {b:"write",p:"wrote",pp:"written",m:"書く",
+  pe:{t:"He {} a letter to his friend in Canada last week.",ja:"彼は先週、カナダの友達に手紙を書いた。",c:["last week"],g:"past"},
+  ppe:{t:"This book is {} in easy English.",ja:"この本はやさしい英語で書かれている。",c:["is"],g:"passive"}},
+ {b:"speak",p:"spoke",pp:"spoken",m:"話す",
+  pe:{t:"She {} to me in French at the party yesterday.",ja:"昨日のパーティーで、彼女はフランス語で話しかけてきた。",c:["yesterday"],g:"past"},
+  ppe:{t:"Portuguese is the language {} in Brazil.",ja:"ポルトガル語はブラジルで話されている言語だ。",c:["the language"],g:"participle"}},
+ {b:"sing",p:"sang",pp:"sung",m:"歌う",
+  pe:{t:"We {} a song for our teacher last March.",ja:"去年の3月、先生のために歌を歌った。",c:["last March"],g:"past"},
+  ppe:{t:"This song has been {} for over 100 years.",ja:"この歌は100年以上歌い継がれてきた。",c:["has been","for over 100 years"],g:"perfectPassive"}},
+ {b:"teach",p:"taught",pp:"taught",m:"教える",
+  pe:{t:"Ms. Tanaka {} us how to use the software last week.",ja:"田中先生は先週、ソフトの使い方を教えてくれた。",c:["last week"],g:"past"},
+  ppe:{t:"English is {} as a second language in many countries.",ja:"英語は多くの国で第二言語として教えられている。",c:["is"],g:"passive"}},
+ {b:"do",p:"did",pp:"done",m:"する",
+  pe:{t:"I {} my homework before dinner last night.",ja:"昨夜、夕食前に宿題をした。",c:["last night"],g:"past"},
+  ppe:{t:"Have you {} your homework yet?",ja:"もう宿題はやりましたか？",c:["Have","yet"],g:"perfect"}},
+ {b:"feel",p:"felt",pp:"felt",m:"感じる",
+  pe:{t:"I {} nervous before my speech yesterday.",ja:"昨日、スピーチの前に緊張した。",c:["yesterday"],g:"past"},
+  ppe:{t:"Have you ever {} an earthquake?",ja:"地震を感じたことはありますか？",c:["Have","ever"],g:"perfect"}},
+ {b:"catch",p:"caught",pp:"caught",m:"捕まえる",
+  pe:{t:"We {} three fish at the lake last Sunday.",ja:"先週の日曜、湖で魚を3匹釣った。",c:["last Sunday"],g:"past"},
+  ppe:{t:"The thief was {} by the police two days later.",ja:"泥棒は2日後に警察に捕まった。",c:["was","by"],g:"passive"}},
+ {b:"leave",p:"left",pp:"left",m:"去る・出発する",
+  pe:{t:"The bus {} five minutes before I arrived.",ja:"私が着く5分前にバスは出発した。",c:["arrived"],g:"agree"},
+  ppe:{t:"When I got to the station, the train had already {}.",ja:"駅に着いたとき、電車はもう出発していた。",c:["had already"],g:"pastPerfect"}},
+ {b:"meet",p:"met",pp:"met",m:"会う",
+  pe:{t:"I {} an old friend at the station yesterday.",ja:"昨日、駅で旧友に会った。",c:["yesterday"],g:"past"},
+  ppe:{t:"We have {} each other only twice.",ja:"私たちはお互いに2回しか会ったことがない。",c:["have","twice"],g:"perfect"}},
+ {b:"hear",p:"heard",pp:"heard",m:"聞こえる",
+  pe:{t:"I {} a strange noise last night.",ja:"昨夜、変な音が聞こえた。",c:["last night"],g:"past"},
+  ppe:{t:"His voice could be {} from the next room.",ja:"彼の声は隣の部屋から聞こえた。",c:["could be"],g:"modalPassive"}}
+];
+/* 31語目以降（登場順）。X(原形,過去,過去分詞,意味, 過去の例文,訳,手がかり,文法, 過去分詞の例文,訳,手がかり,文法, 追加) */
+function X(b,p,pp,m, pt,pja,pc,pg, qt,qja,qc,qg, o){
+  o = o || {};
+  const w = {b,p,pp,m, pe:{t:pt,ja:pja,c:pc.split("|"),g:pg}, ppe:{t:qt,ja:qja,c:qc.split("|"),g:qg}};
+  if(o.alt) w.ppAlt = o.alt;
+  if(o.a){ w.ppe.a = o.a; w.ppe.ok = o.ok || [o.a]; }
+  if(o.note) w.ppe.note = o.note;
+  return w;
+}
+BASE.push(
+ X("get","got","got","手に入れる","I {} a letter from my cousin last week.","先週、いとこから手紙をもらった。","last week","past","I have {} used to my new school.","新しい学校に慣れてきた。","have","perfect",{alt:["gotten"],a:"gotten",ok:["gotten","got"],note:"got と gotten：イギリス英語では過去分詞もふつう got。アメリカ英語では「手に入れた」「〜になった」の意味で gotten を使う（It has gotten cold.）。ただし「持っている」の have got（I've got a pen.）はアメリカ英語でも got。学校のテストや英検ではどちらも正解。"}),
+ X("keep","kept","kept","保つ","I {} the door open because it was hot.","暑かったので、ドアを開けておいた。","was","agree","The room is {} clean by the staff.","その部屋はスタッフがきれいに保っている。","is|by","passive"),
+ X("sleep","slept","slept","眠る","I {} for ten hours last night.","昨夜は10時間寝た。","last night","past","I haven't {} well since the exam started.","試験が始まってから、よく眠れていない。","haven't|since","perfect"),
+ X("sit","sat","sat","座る","We {} in the front row at the concert yesterday.","昨日のコンサートで、最前列に座った。","yesterday","past","Have you ever {} in a first-class seat?","ファーストクラスの席に座ったことはありますか？","Have|ever","perfect"),
+ X("stand","stood","stood","立つ","We {} in line for an hour last Saturday.","先週の土曜日、1時間列に並んだ。","last Saturday","past","This temple has {} here for 500 years.","この寺は500年間ここに建っている。","has|for 500 years","perfect"),
+ X("begin","began","begun","始まる・始める","The movie {} at seven last night.","昨夜、映画は7時に始まった。","last night","past","The game had already {} when we arrived.","私たちが着いたとき、試合はもう始まっていた。","had already","pastPerfect"),
+ X("swim","swam","swum","泳ぐ","I {} in the sea last summer.","去年の夏、海で泳いだ。","last summer","past","She has {} across the river twice.","彼女はその川を2回泳いで渡ったことがある。","has|twice","perfect"),
+ X("drink","drank","drunk","飲む","I {} a lot of water after the race yesterday.","昨日のレース後、水をたくさん飲んだ。","yesterday","past","Green tea is {} all over Japan.","緑茶は日本中で飲まれている。","is","passive"),
+ X("ring","rang","rung","鳴る","The phone {} at midnight last night.","昨夜の真夜中に電話が鳴った。","last night","past","The bell had already {} when I got to class.","教室に着いたとき、チャイムはもう鳴っていた。","had already","pastPerfect"),
+ X("fly","flew","flown","飛ぶ","We {} to Okinawa last summer.","去年の夏、飛行機で沖縄へ行った。","last summer","past","Have you ever {} in a helicopter?","ヘリコプターに乗ったことはありますか？","Have|ever","perfect"),
+ X("lose","lost","lost","失う","I {} my umbrella on the train yesterday.","昨日、電車で傘をなくした。","yesterday","past","The {} dog was found two days later.","迷子の犬は2日後に見つかった。","dog","participleBefore"),
+ X("win","won","won","勝つ","Our team {} the game last Friday.","先週の金曜日、私たちのチームは試合に勝った。","last Friday","past","She has {} the contest three times.","彼女はそのコンテストで3回優勝している。","has|three times","perfect"),
+ X("sell","sold","sold","売る","He {} his old bike to a friend last month.","彼は先月、古い自転車を友達に売った。","last month","past","This magazine is {} at every convenience store.","この雑誌はどのコンビニでも売られている。","is","passive"),
+ X("hold","held","held","持つ・開く","I {} the baby in my arms yesterday.","昨日、赤ちゃんを腕に抱いた。","yesterday","past","The Olympics were {} in Tokyo in 2021.","オリンピックは2021年に東京で開かれた。","were","passive"),
+ X("pay","paid","paid","払う","Yesterday, I {} 500 yen for this notebook.","昨日、このノートに500円払った。","Yesterday","past","The bill has already been {}.","請求書はすでに支払われている。","has already been","perfectPassive"),
+ X("send","sent","sent","送る","I {} an email to my teacher this morning.","今朝、先生にメールを送った。","this morning","past","The package {} from Canada arrived today.","カナダから送られた小包が今日届いた。","The package","participle"),
+ X("spend","spent","spent","過ごす・使う","We {} three days in Hokkaido last winter.","去年の冬、北海道で3日間過ごした。","last winter","past","A lot of money has been {} on the new stadium.","新しいスタジアムに多額のお金が使われてきた。","has been","perfectPassive"),
+ X("lend","lent","lent","貸す","My friend {} me her notebook yesterday.","昨日、友達がノートを貸してくれた。","yesterday","past","The book {} to me by Ken was very interesting.","ケンが貸してくれた本はとても面白かった。","The book","participle"),
+ X("build","built","built","建てる","My grandfather {} this house 50 years ago.","祖父は50年前にこの家を建てた。","ago","past","A new library is being {} near the station.","駅の近くに新しい図書館が建設中だ。","is being","progressivePassive"),
+ X("understand","understood","understood","理解する","I finally {} the problem after my teacher explained it.","先生が説明してくれて、やっと問題が分かった。","explained","agree","He spoke slowly so that he could be {} by everyone.","彼はみんなに分かってもらえるよう、ゆっくり話した。","could be","modalPassive"),
+ X("hit","hit","hit","打つ・ぶつかる","A big typhoon {} Okinawa last week.","先週、大きな台風が沖縄を直撃した。","last week","past","Many houses were {} by the typhoon.","多くの家が台風の被害を受けた。","were|by","passive"),
+ X("let","let","let","〜させる","My mother {} me go to the concert last Sunday.","先週の日曜、母はコンサートに行かせてくれた。","last Sunday","past","Have you ever {} your dog sleep in your bed?","犬を自分のベッドで寝かせたことはありますか？","Have|ever","perfect"),
+ X("set","set","set","セットする・整える","I {} my alarm for six o'clock last night.","昨夜、目覚ましを6時にセットした。","last night","past","The table has already been {} for dinner.","夕食の食卓はもう準備されている。","has already been","perfectPassive"),
+ X("shut","shut","shut","閉める","She {} the window because it started to rain.","雨が降り始めたので、彼女は窓を閉めた。","started","agree","The shop has been {} since last month.","その店は先月から閉まっている。","has been|since","perfectPassive"),
+ X("hurt","hurt","hurt","傷つける・けがをさせる","I {} my leg while playing soccer yesterday.","昨日サッカーをしていて足をけがした。","yesterday","past","Nobody was {} in the accident.","その事故でけがをした人はいなかった。","was","passive"),
+ X("cost","cost","cost","（お金が）かかる","This bag {} 3,000 yen when I bought it.","このバッグは買ったとき3,000円だった。","bought","agree","The repairs have {} more than we expected.","修理は予想以上にお金がかかっている。","have","perfect"),
+ X("grow","grew","grown","育つ・育てる","The tomatoes {} very fast last summer.","去年の夏、トマトはとても早く育った。","last summer","past","These vegetables are {} without chemicals.","これらの野菜は農薬を使わずに育てられている。","are","passive"),
+ X("throw","threw","thrown","投げる","He {} the ball to his dog in the park yesterday.","昨日、彼は公園で犬にボールを投げた。","yesterday","past","Too much food is {} away every day.","毎日あまりにも多くの食べ物が捨てられている。","is","passive"),
+ X("draw","drew","drawn","描く","She {} a picture of her cat last night.","昨夜、彼女は猫の絵を描いた。","last night","past","This picture was {} by a famous artist.","この絵は有名な画家によって描かれた。","was|by","passive"),
+ X("show","showed","shown","見せる","My brother {} me his new game yesterday.","昨日、兄が新しいゲームを見せてくれた。","yesterday","past","The results {} in this graph surprised us.","このグラフに示された結果に私たちは驚いた。","The results","participle"),
+ X("break","broke","broken","壊す","My little brother {} my glasses yesterday.","昨日、弟が私の眼鏡を壊した。","yesterday","past","Be careful of the {} glass on the floor.","床の割れたガラスに気をつけて。","glass","participleBefore"),
+ X("choose","chose","chosen","選ぶ","I {} the blue shirt at the store last weekend.","先週末、店で青いシャツを選んだ。","last weekend","past","She was {} as the captain of the team.","彼女はチームのキャプテンに選ばれた。","was","passive"),
+ X("forget","forgot","forgotten","忘れる","I {} my homework at home this morning.","今朝、宿題を家に忘れた。","this morning","past","Her name has been {} by most people.","彼女の名前はほとんどの人に忘れられている。","has been|by","perfectPassive"),
+ X("wake","woke","woken","目覚める・起こす","I {} up at five this morning.","今朝は5時に目が覚めた。","this morning","past","I was {} by the sound of thunder last night.","昨夜、雷の音で起こされた。","was|by","passive"),
+ X("wear","wore","worn","身につけている","She {} a red dress to the party last night.","昨夜のパーティーに、彼女は赤いドレスを着ていった。","last night","past","These shoes have been {} for three years.","この靴は3年間はいている。","have been|for three years","perfectPassive"),
+ X("ride","rode","ridden","乗る","We {} our bikes to the lake last Sunday.","先週の日曜、自転車で湖まで行った。","last Sunday","past","Have you ever {} a horse?","馬に乗ったことはありますか？","Have|ever","perfect"),
+ X("drive","drove","driven","運転する","My father {} us to the airport yesterday.","昨日、父が空港まで車で送ってくれた。","yesterday","past","This car has been {} more than 100,000 kilometers.","この車は10万キロ以上走っている。","has been","perfectPassive"),
+ X("rise","rose","risen","上がる・昇る","Prices {} sharply last year.","去年、物価が急に上がった。","last year","past","The sun had already {} when I woke up.","私が起きたとき、太陽はもう昇っていた。","had already","pastPerfect"),
+ X("hide","hid","hidden","隠れる・隠す","The cat {} under the bed during the storm last night.","昨夜の嵐の間、猫はベッドの下に隠れた。","last night","past","The key was {} under a flowerpot.","鍵は植木鉢の下に隠されていた。","was","passive"),
+ X("bite","bit","bitten","かむ","A mosquito {} me while I was sleeping.","寝ている間に蚊に刺された。","was","agree","He was {} by a dog when he was a child.","彼は子どものころ犬にかまれた。","was|by","passive"),
+ X("fall","fell","fallen","落ちる","The leaves {} early last autumn.","去年の秋は葉が早く落ちた。","last autumn","past","The ground was covered with {} leaves.","地面は落ち葉で覆われていた。","leaves","participleBefore"),
+ X("fight","fought","fought","戦う","The two countries {} a long war in the 19th century.","その2国は19世紀に長い戦争をした。","in the 19th century","past","Doctors have {} against the disease for years.","医師たちは何年もその病気と闘ってきた。","have|for years","perfect"),
+ X("feed","fed","fed","えさをやる","I {} my neighbor's cat while she was away.","隣の人が留守の間、猫にえさをやった。","was","agree","The animals at the zoo are {} twice a day.","動物園の動物は1日2回えさをもらう。","are","passive"),
+ X("lead","led","led","導く・率いる","She {} the team to victory last year.","去年、彼女はチームを勝利に導いた。","last year","past","The project was {} by a young engineer.","そのプロジェクトは若いエンジニアが率いた。","was|by","passive"),
+ X("mean","meant","meant","意味する・〜するつもり","I {} to call you, but I forgot.","電話するつもりだったけど、忘れてしまった。","forgot","agree","What is {} by this word?","この単語はどういう意味ですか？","is","passive"),
+ X("lie","lay","lain","横たわる","The cat {} in the sun all afternoon yesterday.","昨日、猫は午後ずっと日なたで寝そべっていた。","yesterday","past","The book had {} on the desk for weeks before I read it.","その本は、読むまで何週間も机の上に置かれたままだった。","had|for weeks","pastPerfect",{note:"lie（横たわる）の過去形 lay は、lay（横たえる）の原形と同じ形。"}),
+ X("lay","laid","laid","横たえる・敷く","She {} the baby on the bed a few minutes ago.","数分前、彼女は赤ちゃんをベッドに寝かせた。","ago","past","The table was {} with a white cloth.","テーブルには白い布が敷かれていた。","was","passive",{note:"lay（横たえる）の原形は、lie（横たわる）の過去形と同じ形。"}),
+ X("seek","sought","sought","探し求める","Last night, many people {} shelter from the rain under the bridge.","昨夜、多くの人が橋の下で雨宿りをした。","Last night","past","Experienced nurses are {} by many hospitals.","経験のある看護師は多くの病院に求められている。","are|by","passive"),
+ X("deal","dealt","dealt","対処する","The teacher {} with the problem quickly yesterday.","昨日、先生はその問題にすばやく対処した。","yesterday","past","The complaint has already been {} with.","その苦情にはすでに対処済みだ。","has already been","perfectPassive"),
+ X("mislead","misled","misled","誤解させる","The advertisement {} many customers last year.","去年、その広告は多くの客を誤解させた。","last year","past","Many people were {} by the fake news.","多くの人が偽のニュースに惑わされた。","were|by","passive"),
+ X("bet","bet","bet","賭ける","He {} 1,000 yen that his team would win.","彼は自分のチームが勝つ方に1,000円賭けた。","would","agree","I had {} my brother that it would rain, and I was right.","雨が降る方に弟と賭けていて、私の勝ちだった。","had","pastPerfect"),
+ X("burst","burst","burst","破裂する","The balloon {} when the child touched it.","子どもが触れたとき、風船が割れた。","touched","agree","A {} pipe flooded the kitchen.","破裂した水道管で台所が水浸しになった。","pipe","participleBefore"),
+ X("spread","spread","spread","広がる","The news {} quickly through the school yesterday.","昨日、そのニュースはすぐに学校中に広まった。","yesterday","past","The virus has {} to many countries.","そのウイルスは多くの国に広がっている。","has","perfect"),
+ X("bend","bent","bent","曲げる・かがむ","He {} down to pick up the coin he had dropped.","彼は落とした硬貨を拾おうとかがんだ。","had dropped","agree","The fork was {}, so I couldn't use it.","フォークが曲がっていて使えなかった。","was","passive"),
+ X("shoot","shot","shot","撃つ・撮影する","The player {} the ball into the goal in yesterday's game.","昨日の試合で、その選手はゴールにシュートを決めた。","yesterday's","past","This movie was {} in New Zealand.","この映画はニュージーランドで撮影された。","was","passive"),
+ X("dig","dug","dug","掘る","The dog {} a hole in the garden this morning.","今朝、犬が庭に穴を掘った。","this morning","past","The tunnel was {} by hand 200 years ago.","そのトンネルは200年前に手で掘られた。","was","passive"),
+ X("stick","stuck","stuck","くっつく・刺す","Yesterday, some gum {} to my shoe.","昨日、ガムが靴にくっついた。","Yesterday","past","I got {} in traffic for two hours.","2時間渋滞に巻き込まれた。","got","getPassive"),
+ X("swing","swung","swung","揺れる・振り動かす","At the zoo yesterday, a monkey {} from tree to tree.","昨日の動物園で、サルが木から木へ飛び移っていた。","yesterday","past","The door had {} open in the wind.","風でドアが開いてしまっていた。","had","pastPerfect"),
+ X("strike","struck","struck","襲う・打つ","A strong earthquake {} the area in 2011.","2011年、強い地震がその地域を襲った。","in 2011","past","The tower was {} by lightning.","その塔は雷に打たれた。","was|by","passive"),
+ X("shine","shone","shone","輝く","The stars {} brightly last night.","昨夜、星が明るく輝いていた。","last night","past","The sun has {} all day.","一日中太陽が照っている。","has","perfect"),
+ X("shrink","shrank","shrunk","縮む","My sweater {} when I washed it.","洗ったらセーターが縮んだ。","washed","agree","The number of children has {} in this town.","この町では子どもの数が減っている。","has","perfect"),
+ X("sink","sank","sunk","沈む","The Titanic {} in 1912.","タイタニック号は1912年に沈んだ。","in 1912","past","The boat had {} before help arrived.","助けが来る前に船は沈んでしまっていた。","had","pastPerfect"),
+ X("sweep","swept","swept","掃く","I {} the classroom floor after school yesterday.","昨日、放課後に教室の床を掃いた。","yesterday","past","The streets are {} every morning.","通りは毎朝掃除されている。","are","passive"),
+ X("weep","wept","wept","泣く","She {} when she heard the sad news.","悲しい知らせを聞いて、彼女は泣いた。","heard","agree","He had {} for hours before he fell asleep.","彼は眠りにつくまで何時間も泣いていた。","had","pastPerfect"),
+ X("overcome","overcame","overcome","克服する","She {} her fear of speaking in public last year.","去年、彼女は人前で話す恐怖を克服した。","last year","past","Many difficulties have been {} by the team.","チームは多くの困難を乗り越えてきた。","have been|by","perfectPassive"),
+ X("freeze","froze","frozen","凍る","The lake {} last winter.","去年の冬、湖が凍った。","last winter","past","I bought some {} pizza at the supermarket.","スーパーで冷凍ピザを買った。","pizza","participleBefore"),
+ X("forgive","forgave","forgiven","許す","Last night, she {} her brother for breaking her cup.","昨夜、彼女はカップを割った弟を許した。","Last night","past","You will be {} if you tell the truth.","本当のことを言えば許されるよ。","will be","modalPassive"),
+ X("forbid","forbade","forbidden","禁じる","My parents {} me to go out after dark when I was little.","小さいころ、両親は暗くなってからの外出を禁じた。","was","agree","Smoking is {} in this building.","この建物内では喫煙が禁止されている。","is","passive"),
+ X("shake","shook","shaken","揺れる・動揺させる","The ground {} during the earthquake last night.","昨夜の地震で地面が揺れた。","last night","past","She was {} by the terrible news.","彼女はそのひどい知らせに動揺した。","was|by","passive"),
+ X("steal","stole","stolen","盗む","Someone {} my bike from the station last week.","先週、駅で自転車を盗まれた。","last week","past","The {} painting was found in Paris.","盗まれた絵はパリで見つかった。","painting","participleBefore"),
+ X("tear","tore","torn","引き裂く・破る","He {} the letter into pieces yesterday.","昨日、彼は手紙をびりびりに破った。","yesterday","past","My jeans are {} at the knee.","ジーンズがひざのところで破れている。","are","passive"),
+ X("bear","bore","borne","耐える・産む","Last year, she {} the pain without complaining.","去年、彼女は文句も言わずに痛みに耐えた。","Last year","past","Mozart was {} in 1756.","モーツァルトは1756年に生まれた。","was","passive",{alt:["born"],a:"born",ok:["born"],note:"born と borne：どちらも bear の過去分詞で、地域ではなく意味で使い分ける。born は「生まれる」の be born だけ（I was born in 2012.）。「耐える」「運ぶ」や、「（子どもを）産んだ」を能動態で言うときは borne（She has borne the pain. / She has borne three children.）。airborne（空気で運ばれる）のような単語にも borne が入っている。"}),
+ X("arise","arose","arisen","生じる","A problem {} during the meeting yesterday.","昨日の会議中に問題が生じた。","yesterday","past","New questions have {} from the study.","その研究から新たな疑問が生じている。","have","perfect"),
+ X("withdraw","withdrew","withdrawn","引き出す・撤退する","I {} 10,000 yen from the bank this morning.","今朝、銀行から1万円を引き出した。","this morning","past","The product was {} from the market.","その商品は市場から回収された。","was","passive"),
+ X("undergo","underwent","undergone","経験する・受ける","My grandfather {} surgery last month.","祖父は先月手術を受けた。","last month","past","The city has {} many changes in recent years.","その町は近年、多くの変化を経験してきた。","has|in recent years","perfect")
+);
+
+let W = [], ALL = [], BY = {}, PLAY = [];
+function rebuild(){
+  const custom = S.custom || {};
+  ALL = BASE.map(w=>custom[w.b]||w).concat(Object.values(custom).filter(c=>!BASE.some(x=>x.b===c.b)));
+  const idx = {}; BASE.forEach((x,i)=>{ idx[x.b] = i; });
+  PLAY = ALL.filter(w=>!(S.off||{})[w.b]);
+  W = PLAY.filter(w=>!(w.b in idx) || idx[w.b] < S.unlocked);
+  BY = Object.fromEntries(ALL.map(w=>[w.b,w]));
+}
+
+/* ---------- 種族（3つの形から自動判定） ---------- */
+function species(w){
+  if(w.b===w.p && w.p===w.pp) return "AAA";
+  if(w.p===w.pp) return "ABB";
+  if(w.b===w.pp) return "ABA";
+  return "ABC";
+}
+const SP_INFO = {
+  AAA:{name:"AAA族",hint:"この子はAAA族。3つとも同じ形だよ"},
+  ABB:{name:"ABB族",hint:"この子はABB族。過去と過去分詞が同じ形だよ"},
+  ABA:{name:"ABA族",hint:"この子はABA族。過去分詞で原形の形に戻るよ"},
+  ABC:{name:"ABC族",hint:"この子はABC族。3つとも違う形だよ"}
+};
+
+/* ---------- モンスターの絵 ---------- */
+const COL = {
+  AAA:{m:"#F9D3DE",s:"#E9A6BA",l:"#D98AA2"},
+  ABB:{m:"#CFE9F8",s:"#9CCBEA",l:"#7FB3D6"},
+  ABA:{m:"#DBF2D0",s:"#A9D697",l:"#8CC47A"},
+  ABC:{m:"#FDEBB8",s:"#F2CD6E",l:"#D9B23E"}
+};
+const DROP = "M0 -36 C10 -22 28 -8 28 6 A28 28 0 0 1 -28 6 C-28 -8 -10 -22 0 -36 Z";
+function face(st){
+  const blush = `<ellipse cx="-21" cy="13" rx="4.5" ry="2.8" fill="#F28DA8" opacity=".55"/><ellipse cx="21" cy="13" rx="4.5" ry="2.8" fill="#F28DA8" opacity=".55"/>`;
+  if(st===0) return `<circle cx="-12.5" cy="6" r="5.3" fill="#3a3a3a"/><circle cx="12.5" cy="6" r="5.3" fill="#3a3a3a"/><circle cx="-10.7" cy="4.2" r="2" fill="#fff"/><circle cx="14.3" cy="4.2" r="2" fill="#fff"/><circle cx="-13.9" cy="7.8" r=".9" fill="#fff"/><circle cx="11.1" cy="7.8" r=".9" fill="#fff"/>${blush}<path d="M-3.5 11 Q0 14.5 3.5 11" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+  if(st===1) return `<circle cx="-12.5" cy="6" r="6" fill="#3a3a3a"/><circle cx="12.5" cy="6" r="6" fill="#3a3a3a"/><circle cx="-10.5" cy="4" r="2.3" fill="#fff"/><circle cx="14.5" cy="4" r="2.3" fill="#fff"/><circle cx="-14.1" cy="8" r="1.1" fill="#fff"/><circle cx="10.9" cy="8" r="1.1" fill="#fff"/>${blush}<ellipse cx="0" cy="14" rx="2.6" ry="3.2" fill="#9A4458"/>`;
+  return `<path d="M-17.5 7 Q-12.5 1 -7.5 7 M7.5 7 Q12.5 1 17.5 7" stroke="#3a3a3a" stroke-width="1.9" fill="none" stroke-linecap="round"/>${blush}<path d="M-5 10 Q0 18 5 10 Z" fill="#C0506A"/>`;
+}
+function monsterSVG(sp, st, cls, label){
+  const c = COL[sp];
+  const drop = sp==="ABB" && st>0;
+  const fy = drop?31:29, sy = drop?38:35;
+  const f = `stroke="${c.l}" stroke-width=".8"`;
+  let back = "", body = "", front = "";
+  if(sp==="ABB"){
+    back += `<path d="M0 -29 C-3 -38 7 -42 8 -35 C9 -30 2 -30 3 -34" stroke="#6FA6CC" stroke-width="2" fill="none" stroke-linecap="round" transform="translate(0,${drop?-6:0})"/>`;
+  }
+  if(sp==="ABA"){
+    if(st===1) back += `<path d="M0 -29 L0 -41" stroke="${c.l}" stroke-width="1.6"/><circle cx="0" cy="-45" r="5" fill="#F5D76E" stroke="#D9B23E" stroke-width=".8"/><circle cx="-1.5" cy="-46.5" r="1.5" fill="#fff" opacity=".8"/>`;
+    else back += `<path d="M0 -26 L0 -35" stroke="#6BAE58" stroke-width="1.8"/><path d="M0 -35 C-8 -43 -15 -35 0 -35 Z M0 -35 C8 -45 15 -35 0 -35 Z" fill="#7CC46A"/>`;
+  }
+  if(sp==="ABC"){
+    if(st===2) back += `<path d="M-28 -8 C-36 -20 -50 -20 -54 -12 C-50 -10 -50 -6 -52 -3 C-48 -2 -48 2 -50 5 C-44 8 -34 6 -28 2 Z M28 -8 C36 -20 50 -20 54 -12 C50 -10 50 -6 52 -3 C48 -2 48 2 50 5 C44 8 34 6 28 2 Z" fill="#fff" ${f}/><path d="M-32 -8 L-46 -12 M-32 -3 L-46 -4 M-32 2 L-44 3 M32 -8 L46 -12 M32 -3 L46 -4 M32 2 L44 3" stroke="#E8D9A8" stroke-width="1" fill="none" stroke-linecap="round"/>`;
+    if(st>=1) back += `<path d="M-20 -18 C-30 -34 -18 -46 -8 -27 Z M20 -18 C30 -34 18 -46 8 -27 Z" fill="${c.m}" ${f}/><path d="M-18 -21 C-24 -32 -17 -39 -11 -27 Z M18 -21 C24 -32 17 -39 11 -27 Z" fill="#F2A8B8"/>`;
+    else back += `<path d="M-4 -28 Q-3 -37 0 -30 Q3 -38 4 -28" stroke="${c.l}" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+  }
+  const feet = `<ellipse cx="-11" cy="${fy}" rx="7" ry="4" fill="${c.s}" ${f}/><ellipse cx="11" cy="${fy}" rx="7" ry="4" fill="${c.s}" ${f}/>`;
+  const square = sp==="ABA" && st!==1;
+  if(drop) body = `<path d="${DROP}" fill="${c.s}" ${f}/><path d="${DROP}" fill="${c.m}" transform="translate(-2,-2) scale(.9)"/>`;
+  else if(square) body = `<rect x="-27" y="-27" width="54" height="54" rx="17" fill="${c.s}" ${f}/><rect x="-27" y="-29" width="51" height="51" rx="15" fill="${c.m}"/>`;
+  else body = `<circle r="30" fill="${c.s}" ${f}/><circle cx="-2" cy="-3" r="27" fill="${c.m}"/>`;
+  if(sp==="AAA") front += `<path d="M14 -26 C6 -38 -1 -28 6 -21 Z M14 -26 C22 -38 29 -28 22 -21 Z" fill="#E86A8E"/><circle cx="14" cy="-25" r="3" fill="#D2527A"/>`;
+  if(sp==="ABA" && st===2) front += `<path d="M0 -6 L1.8 -2 L6 -1.8 L2.8 1.2 L3.6 5.6 L0 3.4 L-3.6 5.6 L-2.8 1.2 L-6 -1.8 L-1.8 -2 Z" fill="#F5D76E" stroke="#D9B23E" stroke-width=".6" transform="translate(21,-20)"/>`;
+  return `<svg class="${cls||""}" viewBox="-62 -56 124 100" role="img" aria-label="${label||"モンスター"}"><ellipse cx="0" cy="${sy}" rx="24" ry="4" fill="#000" opacity=".08"/>${back}${feet}${body}${front}${face(st)}</svg>`;
+}
+
+/* 正体を隠したかげの姿（どの種族も同じ見た目） */
+function shadowSVG(st, cls){
+  const s = [0.78,0.9,1][st];
+  const spark = (x,y)=>`<path d="M${x} ${y-7} L${x+2} ${y-2} L${x+7} ${y} L${x+2} ${y+2} L${x} ${y+7} L${x-2} ${y+2} L${x-7} ${y} L${x-2} ${y-2} Z" fill="#FFD95E"/>`;
+  const blob = "M-30 8 C-34 -8 -24 -28 -6 -30 C2 -38 18 -34 22 -24 C34 -20 36 -2 30 10 C32 24 16 30 0 29 C-16 30 -32 24 -30 8 Z";
+  return `<svg class="${cls||""}" viewBox="-62 -56 124 100" role="img" aria-label="正体不明のモンスター">
+    <ellipse cx="0" cy="${35*s}" rx="${24*s}" ry="4" fill="#000" opacity=".08"/>
+    <g transform="scale(${s})">
+      <ellipse cx="-11" cy="29" rx="7" ry="4" fill="#6F6485"/><ellipse cx="11" cy="29" rx="7" ry="4" fill="#6F6485"/>
+      <path d="${blob}" fill="#6F6485"/><path d="${blob}" fill="#8A7FA0" transform="translate(-2,-2) scale(.92)"/>
+      <ellipse cx="-11" cy="3" rx="5.5" ry="6.5" fill="#fff"/><ellipse cx="11" cy="3" rx="5.5" ry="6.5" fill="#fff"/>
+      <circle cx="-10" cy="4.5" r="2.8" fill="#3a3a3a"/><circle cx="12" cy="4.5" r="2.8" fill="#3a3a3a"/>
+      <text x="0" y="-38" text-anchor="middle" font-size="20" font-weight="800" fill="#8A7FA0">?</text>
+    </g>
+    ${st>=1?spark(36,-30):""}${st>=2?spark(-38,-22):""}
+  </svg>`;
+}
+
+/* ---------- 保存 ---------- */
+const KEY = "verbMonsters.v1";
+let mem = null;
+function load(){
+  try{ const s = localStorage.getItem(KEY); if(s) return JSON.parse(s); }catch(e){}
+  return mem || {words:{}, days:{}};
+}
+function save(){
+  mem = S;
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+}
+let S = load();
+S.settings = Object.assign({music:true, sfx:true, limit:60, extend:30}, S.settings||{});
+S.custom = S.custom || {}; S.off = S.off || {};
+if(!S.unlocked) S.unlocked = 30;
+S.story = S.story || {}; S.storySeen = S.storySeen || {};
+S.settings.unlockRate = S.settings.unlockRate || 70;
+rebuild();
+const DAY = 86400000;
+
+/* ---------- 音（Web Audio で合成。音声ファイルは使わない） ---------- */
+const AU = {ctx:null, master:null, bgm:null, lp:null, sfx:null, noise:null, timer:null, step:0, next:0, playing:false};
+const mtof = n=>440*Math.pow(2,(n-69)/12);
+function audio(){
+  if(!AU.ctx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return null;
+    try{
+      const c = AU.ctx = new AC();
+      AU.master = c.createGain(); AU.master.gain.value = .8; AU.master.connect(c.destination);
+      AU.bgm = c.createGain(); AU.bgm.gain.value = .32; AU.bgm.connect(AU.master);
+      AU.lp = c.createBiquadFilter(); AU.lp.type = "lowpass"; AU.lp.frequency.value = 1900; AU.lp.connect(AU.bgm);
+      AU.sfx = c.createGain(); AU.sfx.gain.value = .55; AU.sfx.connect(AU.master);
+      const buf = c.createBuffer(1, c.sampleRate*.05, c.sampleRate);
+      const d = buf.getChannelData(0); for(let i=0;i<d.length;i++) d[i] = Math.random()*2-1;
+      AU.noise = buf;
+    }catch(e){ AU.ctx = null; return null; }
+  }
+  if(AU.ctx.state==="suspended") AU.ctx.resume();
+  return AU.ctx;
+}
+function tone(dest, n, t, dur, type, vol, slideTo){
+  const c = AU.ctx, o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.setValueAtTime(mtof(n), t);
+  if(slideTo) o.frequency.exponentialRampToValueAtTime(mtof(slideTo), t+dur);
+  g.gain.setValueAtTime(.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t+.012);
+  g.gain.exponentialRampToValueAtTime(.0001, t+dur);
+  o.connect(g); g.connect(dest); o.start(t); o.stop(t+dur+.03);
+}
+function tick(t){
+  const c = AU.ctx, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+  s.buffer = AU.noise; f.type = "highpass"; f.frequency.value = 6000;
+  g.gain.setValueAtTime(.05, t); g.gain.exponentialRampToValueAtTime(.0001, t+.04);
+  s.connect(f); f.connect(g); g.connect(AU.bgm); s.start(t);
+}
+/* 8小節のループ。1マス＝8分音符、0は休み */
+const MEL = [76,79,81,79,76,0,74,76, 79,0,76,74,72,0,0,0, 74,76,79,81,84,81,79,76, 74,0,76,74,72,0,74,0,
+             76,79,81,79,76,0,74,76, 79,0,81,79,76,0,0,0, 74,76,79,81,84,81,79,76, 74,76,74,72,72,0,0,0];
+const BASS = [48,48,45,45,41,41,43,43, 48,48,45,45,41,43,48,48];
+const STEP = .25;
+function schedule(){
+  const c = AU.ctx;
+  while(AU.next < c.currentTime + .15){
+    const s = AU.step % 64, t = AU.next;
+    if(MEL[s]) tone(AU.lp, MEL[s], t, STEP*.9, "square", .09);
+    if(s%4===0) tone(AU.bgm, BASS[s/4] - 12, t, STEP*1.8, "triangle", .35);
+    if(s%4===2) tick(t);
+    AU.step++; AU.next += STEP;
+  }
+}
+function startBGM(){
+  if(!S.settings.music || AU.playing) return;
+  if(!audio()) return;
+  AU.playing = true; AU.step = 0; AU.next = AU.ctx.currentTime + .08;
+  AU.timer = setInterval(schedule, 30);
+}
+function stopBGM(){ clearInterval(AU.timer); AU.playing = false; }
+function sfx(kind){
+  if(!S.settings.sfx || !audio()) return;
+  const t = AU.ctx.currentTime + .01, d = AU.sfx;
+  if(kind==="ok"){ tone(d,88,t,.12,"square",.12); tone(d,93,t+.1,.22,"square",.12); }
+  else if(kind==="ng"){ tone(d,67,t,.18,"triangle",.3); tone(d,63,t+.16,.3,"triangle",.3); }
+  else if(kind==="evolve"){ [72,76,79,84,88].forEach((n,i)=>tone(d,n,t+i*.07,.14,"square",.1)); }
+  else if(kind==="appear"){ tone(d,67,t,.18,"sine",.3,79); }
+  else if(kind==="tap"){ tone(d,96,t,.04,"sine",.12); }
+  else if(kind==="fanfare"){ [72,76,79].forEach((n,i)=>tone(d,n,t+i*.11,.12,"square",.11)); tone(d,84,t+.33,.45,"square",.12); tone(d,79,t+.33,.45,"triangle",.3); }
+  else if(kind==="bye"){ [79,76,72].forEach((n,i)=>tone(d,n,t+i*.14,.16,"triangle",.3)); }
+}
+document.addEventListener("visibilitychange", ()=>{
+  if(!AU.ctx) return;
+  if(document.hidden) AU.ctx.suspend(); else AU.ctx.resume();
+});
+function musicButton(){
+  return `<button class="link" id="mus" aria-pressed="${S.settings.music}">音楽 ${S.settings.music?"オン":"オフ"}</button>`;
+}
+function wireMusicButton(){
+  const b = $("#mus"); if(!b) return;
+  b.onclick = ()=>{
+    S.settings.music = !S.settings.music; save();
+    if(S.settings.music) startBGM(); else stopBGM();
+    b.setAttribute("aria-pressed", S.settings.music);
+    b.textContent = `音楽 ${S.settings.music?"オン":"オフ"}`;
+  };
+}
+const todayKey = ()=>{ const d=new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; };
+function rec(b){ return S.words[b] || (S.words[b] = {nk:0, due:0, streak:0, wrong:0, met:false, best:0}); }
+function logAnswer(ok){
+  const k = todayKey(); const d = S.days[k] || (S.days[k] = {n:0,c:0});
+  d.n++; if(ok) d.c++;
+}
+
+/* ---------- ユーティリティ ---------- */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+const shuffle = a=>{ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const pick = a=>a[Math.floor(Math.random()*a.length)];
+function regular(b){
+  if(/e$/.test(b)) return b+"d";
+  if(/[^aeiou]y$/.test(b)) return b.slice(0,-1)+"ied";
+  if(b.length<=4 && /[^aeiou][aeiou][bdgmnprt]$/.test(b)) return b+b.slice(-1)+"ed";
+  return b+"ed";
+}
+const SIMILAR = {bought:["brought","thought"],brought:["bought","thought"],thought:["taught","bought"],taught:["thought","caught"],caught:["taught","bought"]};
+function ansOf(w, step){ const ex = step==="p" ? w.pe : w.ppe; return (ex && ex.t && ex.a) || (step==="p" ? w.p : w.pp); }
+function accOf(w, step){
+  const ex = step==="p" ? w.pe : w.ppe;
+  if(ex && ex.t && ex.ok) return ex.ok;
+  return step==="p" ? [w.p] : [w.pp, ...(w.ppAlt||[])];
+}
+function modeFor(nk){ return nk<=1 ? "choice" : nk<=3 ? "tiles" : "type"; }
+const MODE_NAME = {choice:"4択", tiles:"タイル", type:"手入力"};
+
+/* ---------- 新しいモンスターの登場 ---------- */
+function checkUnlock(){
+  if(S.unlocked >= BASE.length) return 0;
+  const names = new Set(BASE.map(x=>x.b));
+  const pool = W.filter(w=>names.has(w.b));
+  if(!pool.length || !pool.every(w=>S.words[w.b] && S.words[w.b].met)) return 0;
+  const good = pool.filter(w=>S.words[w.b].nk>=4).length;
+  if(good / pool.length * 100 < S.settings.unlockRate) return 0;
+  const before = S.unlocked;
+  S.unlocked = Math.min(BASE.length, S.unlocked + 5);
+  rebuild();
+  return S.unlocked - before;
+}
+
+/* ---------- 出題の選び方 ---------- */
+const session = {count:0, retry:[], last:null, streak:0};
+function nextWord(){
+  session.count++;
+  const r = session.retry.findIndex(x=>x.at<=session.count && x.b!==session.last);
+  if(r>=0){ const b = session.retry.splice(r,1)[0].b; return {b, review:false}; }
+  const now = Date.now();
+  const due = W.filter(w=>{const x=S.words[w.b]; return x&&x.met&&x.due<=now&&w.b!==session.last;})
+               .sort((a,b)=>S.words[a.b].due-S.words[b.b].due);
+  if(due.length) return {b:due[0].b, review:false};
+  const unmet = W.filter(w=>!(S.words[w.b]&&S.words[w.b].met));
+  const fresh = unmet.find(w=>!(S.words[w.b] && S.words[w.b].nk>=4)) || unmet[0];
+  if(fresh) return {b:fresh.b, review:false};
+  const rest = W.filter(w=>w.b!==session.last).sort((a,b)=>S.words[a.b].due-S.words[b.b].due);
+  return {b:rest[0].b, review:true};
+}
+
+/* ---------- 問題づくり ---------- */
+function formOptions(w, step, forceAns, forceAcc){
+  const ans = forceAns || ansOf(w, step);
+  let c = [regular(w.b), step==="p"?w.pp:w.p, w.b, step==="pp"?w.pp:w.p, ...(SIMILAR[ans]||[]), w.p+(w.p.endsWith("e")?"n":"en")];
+  const alts = forceAcc ? forceAcc : accOf(w, step).concat(step==="pp" ? (w.ppAlt||[]) : []);
+  c = [...new Set(c)].filter(x=>x!==ans && !alts.includes(x));
+  c = shuffle(c).slice(0,3);
+  for(let k=0; c.length<3 && k<200; k++){ const o = pick(ALL)[step==="p"?"p":"pp"]; if(o!==ans && !c.includes(o)) c.push(o); }
+  const fake = ["goed","taked","seened","wented","maked"];
+  for(let k=0; c.length<3 && k<fake.length; k++) if(fake[k]!==ans && !c.includes(fake[k])) c.push(fake[k]);
+  return shuffle([ans, ...c]);
+}
+function meaningOptions(w){
+  const tok = m=>m.split("・").map(s=>s.replace(/[（）()]/g,""));
+  const mine = tok(w.m);
+  const others = [...new Set(shuffle(ALL.filter(x=>!tok(x.m).some(t=>mine.includes(t)))).map(x=>x.m))].slice(0,3);
+  return shuffle([w.m, ...others]);
+}
+function tilesFor(ans, w){
+  const pool = ans.split("");
+  const extra = [];
+  const count = s=>{const o={};for(const ch of s)o[ch]=(o[ch]||0)+1;return o;};
+  const have = count(ans);
+  for(const ch of regular(w.b)){ if(!(have[ch]>0) && !extra.includes(ch)) extra.push(ch); }
+  if(/[ou]ght$|aught$/.test(ans)) extra.unshift("r");
+  ["e","d","n"].forEach(ch=>{ if(!extra.includes(ch)) extra.push(ch); });
+  const decoys = extra.slice(0,3);
+  return shuffle([...pool, ...decoys]);
+}
+function highlight(text, cues){
+  let h = esc(text);
+  cues.forEach(cue=>{
+    const re = new RegExp("(^|[^A-Za-z])(" + esc(cue).replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + ")(?![A-Za-z])","i");
+    h = h.replace(re, (m,a,b)=>`${a}<mark class="cue">${b}</mark>`);
+  });
+  return h;
+}
+function sentenceHTML(ex, filled, showCues){
+  const [a,b] = ex.t.split("{}");
+  const ha = showCues ? highlight(a, ex.c||[]) : esc(a);
+  const hb = showCues ? highlight(b, ex.c||[]) : esc(b);
+  const mid = filled ? `<span class="ans">${esc(filled)}</span>` : `<span class="blank" aria-label="空欄">？</span>`;
+  return ha + mid + hb;
+}
+function explain(ex, ans){
+  const cue = (ex.c||[]).length ? ex.c.map(x=>`「${x}」`).join("と") : "文の形";
+  switch(ex.g){
+    case "past": return `${cue}があるから過去の話。過去形の ${ans} を使う。`;
+    case "agree": return `${cue}が過去の形なので、時制をそろえて過去形の ${ans} にする。`;
+    case "perfect": return `${cue}＋過去分詞で現在完了。「今までに〜した・ずっと〜している」を表す。過去分詞は ${ans}。`;
+    case "pastPerfect": return `${cue}から、had＋過去分詞の過去完了。過去のある時点より前のことを表す。過去分詞は ${ans}。`;
+    case "passive": return `${cue}の後に過去分詞で受け身。「〜される・〜されている」を表す。過去分詞は ${ans}。`;
+    case "modalPassive": return `${cue}＋過去分詞で「〜されることができる・〜される」。過去分詞は ${ans}。`;
+    case "perfectPassive": return `${cue}＋過去分詞で、現在完了の受け身。「〜されてきた・〜されている」を表す。過去分詞は ${ans}。`;
+    case "narr": return `物語は過去のできごとを話しているので、過去形の ${ans} を使う。`;
+    case "participleBefore": return `過去分詞の ${ans} が${cue}を前から説明して、「〜した・〜された…」の意味になる。`;
+    case "progressivePassive": return `${cue}＋過去分詞で進行形の受け身。「〜されているところ」を表す。過去分詞は ${ans}。`;
+    case "getPassive": return `${cue}＋過去分詞で「〜された状態になる」。過去分詞は ${ans}。`;
+    case "participle": return `過去分詞の ${ans} が${cue}を後ろから説明して、「〜された…」の意味になる。`;
+  }
+  return "";
+}
+
+/* ---------- 画面：実力チェック ---------- */
+let P = null;
+function startPlacement(){
+  P = {order: shuffle(PLAY), i:0, res:[]};
+  placementQ();
+}
+function placementQ(){
+  if(lockActive()) return lockScreen();
+  SCREEN = "placement";
+  const w = P.order[P.i];
+  $("#app").innerHTML = `
+    <div class="bar"><button class="link" id="quit">‹ ここで終える</button><span class="chip">実力チェック ${P.i+1}／${P.order.length}</span>${musicButton()}</div>
+    <div class="prog" aria-hidden="true"><i style="width:${P.i/P.order.length*100}%"></i></div>
+    <div class="q">
+      <h2>過去形と過去分詞を書こう</h2>
+      <p class="big">${esc(w.b)}</p><p class="bigm">${esc(w.m)}</p>
+      <div class="pair">
+        <label>過去形<input class="type" id="i1" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></label>
+        <label>過去分詞<input class="type" id="i2" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></label>
+      </div>
+      <div class="err" id="err"></div>
+      <div id="pfb"></div>
+      <div class="row" id="pbtns"><button class="btn sec" id="idk">わからない</button><button class="btn" id="ok">答える</button></div>
+    </div>`;
+  wireMusicButton();
+  $("#quit").onclick = ()=>{ if(P.res.length) placementEnd(); else home(); };
+  const i1 = $("#i1"), i2 = $("#i2");
+  i1.focus({preventScroll:true});
+  [i1,i2].forEach(x=>x.oninput = ()=>{ $("#err").textContent = ""; });
+  i1.onkeydown = e=>{ if(e.key==="Enter"){ e.preventDefault(); i2.focus(); } };
+  i2.onkeydown = e=>{ if(e.key==="Enter"){ e.preventDefault(); placementSubmit(false); } };
+  $("#ok").onclick = ()=>placementSubmit(false);
+  $("#idk").onclick = ()=>placementSubmit(true);
+}
+function placementSubmit(dontKnow){
+  const w = P.order[P.i];
+  const norm = s=>s.trim().toLowerCase().replace(/\s+/g," ");
+  const v1 = norm($("#i1").value), v2 = norm($("#i2").value);
+  if(!dontKnow){
+    if(!v1 || !v2){ $("#err").textContent = "両方書くか、「わからない」を押してね"; return; }
+    if(!/^[a-z' ]+$/.test(v1+v2)){ $("#err").textContent = "英語のアルファベットで書いてね"; return; }
+  }
+  const okP = !dontKnow && v1===w.p;
+  const okPP = !dontKnow && (v2===w.pp || (w.ppAlt||[]).includes(v2));
+  P.res.push({w, okP, okPP});
+  $("#i1").disabled = true; $("#i2").disabled = true;
+  $("#i1").classList.add(okP?"right":"wrong"); $("#i2").classList.add(okPP?"right":"wrong");
+  $("#pbtns").innerHTML = "";
+  const both = okP && okPP;
+  sfx(both ? "ok" : "ng");
+  const advance = ()=>{ P.i++; if(P.i<P.order.length) placementQ(); else placementEnd(); };
+  if(both){
+    $("#pfb").innerHTML = `<div class="fb ok"><p class="head">正解！</p></div>`;
+    setTimeout(advance, 700);
+  }else{
+    $("#pfb").innerHTML = `<div class="fb ng"><p class="head">${dontKnow?"答えはこれ":"おしい"}</p><p>${esc(w.b)} – ${esc(w.p)} – ${esc(w.pp)}</p></div><button class="btn" id="nx">つぎへ</button>`;
+    $("#nx").onclick = advance;
+    $("#nx").focus({preventScroll:true});
+  }
+}
+function placementEnd(){
+  let known = 0, half = 0;
+  const miss = [];
+  P.res.forEach(({w, okP, okPP})=>{
+    const r = rec(w.b);
+    if(okP && okPP){ r.nk = Math.max(r.nk, 4); known++; }
+    else if(okP || okPP){ r.nk = Math.max(r.nk, 2); half++; miss.push(w); }
+    else { miss.push(w); }
+  });
+  S.placed = true; save();
+  sfx("fanfare");
+  const list = miss.map(w=>`<li>${esc(w.b)} – ${esc(w.p)} – ${esc(w.pp)}（${esc(w.m)}）</li>`).join("");
+  $("#app").innerHTML = `
+    <div class="bar"><span class="chip">実力チェックの結果</span>${musicButton()}</div>
+    <div class="stats">
+      <div class="stat"><b>${known}</b><span>両方書けた</span></div>
+      <div class="stat"><b>${half}</b><span>片方だけ</span></div>
+      <div class="stat"><b>${P.res.length-known-half}</b><span>まだこれから</span></div>
+    </div>
+    <div class="fb ok"><p>両方書けた単語は手入力から、片方だけの単語はタイルから、まだの単語は4択から始まるよ。あやふやな単語から先に出てくるよ。</p></div>
+    ${miss.length ? `<div class="miss"><b>これから覚える単語</b><ul>${list}</ul></div>` : `<div class="fb ok"><p class="head">全部書けた！</p><p>手入力でどんどん図鑑を集めよう。</p></div>`}
+    <button class="btn" id="go">草むらへ出かける</button>
+    <button class="btn sec" id="home2">ホームにもどる</button>`;
+  wireMusicButton();
+  $("#go").onclick = ()=>{ startBGM(); startEncounter(); };
+  $("#home2").onclick = home;
+}
+
+/* ---------- 画面：ホーム ---------- */
+function home(){
+  SCREEN = "home";
+  const met = ALL.filter(w=>S.words[w.b]&&S.words[w.b].met).length;
+  const d = S.days[todayKey()] || {n:0,c:0};
+  const rate = d.n ? Math.round(d.c/d.n*100)+"%" : "—";
+  $("#app").innerHTML = `
+    <h1>不規則動詞モンスター</h1>
+    <p class="sub">草むらで動詞のモンスターに出会って、答えて進化させよう。</p>
+    <div class="field"><div class="parade">
+      ${monsterSVG("AAA",0,"","AAA族")}${monsterSVG("ABB",1,"","ABB族")}${monsterSVG("ABA",1,"","ABA族")}${monsterSVG("ABC",2,"","ABC族")}
+    </div></div>
+    ${S.placed ? `<button class="btn" id="go">草むらへ出かける</button>` :
+      `<button class="btn" id="check">実力チェックから始める</button>
+       <p class="note">知っている単語を先に確かめて、ちょうどいい難しさから始めるよ。${PLAY.length}語で${Math.ceil(PLAY.length/7)}分くらい。途中で終えることもできるよ。</p>
+       <button class="btn sec" id="go">チェックせずに始める</button>`}
+    <button class="btn sec" id="dex">図鑑を見る（${met}／${ALL.length}）</button>
+    <button class="btn sec" id="story">ストーリー${newChapterReady()?"（新しい章が読めるよ）":""}</button>
+    <div class="stats">
+      <div class="stat"><b>${d.n}</b><span>今日解いた数</span></div>
+      <div class="stat"><b>${rate}</b><span>今日の正答率</span></div>
+      ${S.auth ? `<div class="stat"><b>${remainingMin()}分</b><span>今日の残り時間</span></div>` : ""}
+    </div>
+    <div class="toggles">
+      <button class="tg" id="tMusic" aria-pressed="${S.settings.music}">音楽：${S.settings.music?"オン":"オフ"}</button>
+      <button class="tg" id="tSfx" aria-pressed="${S.settings.sfx}">効果音：${S.settings.sfx?"オン":"オフ"}</button>
+    </div>
+    <p style="text-align:center;margin-top:18px"><button class="link" id="parent">保護者メニュー</button></p>`;
+  $("#parent").onclick = parentGate;
+  $("#go").onclick = ()=>{ S.placed = true; save(); startBGM(); startEncounter(); };
+  if($("#check")) $("#check").onclick = ()=>{ startBGM(); startPlacement(); };
+  $("#dex").onclick = ()=>{ startBGM(); dex(); };
+  $("#story").onclick = ()=>{ startBGM(); storyList(); };
+  $("#tMusic").onclick = ()=>{
+    S.settings.music = !S.settings.music; save();
+    if(S.settings.music) startBGM(); else stopBGM();
+    home();
+  };
+  $("#tSfx").onclick = ()=>{
+    S.settings.sfx = !S.settings.sfx; save();
+    sfx("tap"); home();
+  };
+}
+
+/* ---------- 画面：図鑑 ---------- */
+function dex(){
+  SCREEN = "dex";
+  const groups = ["AAA","ABB","ABA","ABC"];
+  const desc = {AAA:"3つとも同じ",ABB:"過去＝過去分詞",ABA:"原形＝過去分詞",ABC:"3つとも違う"};
+  let html = `<div class="bar"><button class="link" id="back">‹ ホーム</button><span class="chip">図鑑</span></div>`;
+  groups.forEach(g=>{
+    const ws = ALL.filter(w=>species(w)===g);
+    html += `<div class="sp">${SP_INFO[g].name}<small>${desc[g]}</small></div><div class="dex">`;
+    ws.forEach(w=>{
+      const r = S.words[w.b];
+      if(r && r.met){
+        html += `<div class="cell ${r.nk>=6?"gold":""}">${monsterSVG(g, Math.min(r.best,2), "", w.b)}<b>${esc(w.b)}</b><small>${esc(w.p)} / ${esc(w.pp)}<br>${esc(w.m)}${S.off[w.b]?"<br>お休み中":""}</small></div>`;
+      }else{
+        html += `<div class="cell unknown"><svg viewBox="-62 -56 124 100" aria-label="まだ出会っていない"><circle r="30" fill="#C9D1D6"/><text x="0" y="10" text-anchor="middle" font-size="28" font-weight="800" fill="#fff">？</text></svg><b>？？？</b><small>まだ出会っていない</small></div>`;
+      }
+    });
+    html += `</div>`;
+  });
+  $("#app").innerHTML = html;
+  $("#back").onclick = home;
+}
+
+/* ---------- 画面：バトル ---------- */
+let E = null;
+function startEncounter(){
+  if(lockActive()) return lockScreen();
+  SCREEN = "battle";
+  const {b, review} = nextWord();
+  session.last = b;
+  const w = BY[b], r = rec(b);
+  E = {w, sp:species(w), r, review, isNew:!r.met, steps:["m","p","pp"], i:0, stage:0,
+       mode:modeFor(r.nk), wrong:false, hinted:false, tries:0, anim:"appear", answered:false, built:[]};
+  renderBattle();
+}
+function hearts(nk){ let h=""; for(let i=0;i<6;i++) h+=`<i class="${i<nk?"on":""}"></i>`; return `<div class="hearts" aria-label="なつき度 ${nk}／6">${h}</div>`; }
+function formsLine(){
+  const w=E.w; const parts=[w.b]; if(E.stage>=1) parts.push(w.p); if(E.stage>=2) parts.push(w.pp);
+  return parts.join(" – ");
+}
+function battleTop(){
+  const tag = E.isNew ? "はじめて出会った！" : E.review ? "おさらい" : "また出てきた！";
+  return `
+  <div class="bar"><button class="link" id="back">‹ ホーム</button><span class="chip">連続正解 ${session.streak}${timeChip()}</span>${musicButton()}</div>
+  <div class="field">
+    <span class="tag">${tag}　${MODE_NAME[E.mode]}</span><br>
+    ${shadowSVG(E.stage, "mon "+(E.anim||""))}
+    <div class="word">${esc(E.stage===0?E.w.b:E.stage===1?E.w.p:E.w.pp)}</div>
+    <div class="forms">${esc(formsLine())}</div>
+    ${hearts(E.r.nk)}
+  </div>`;
+}
+function renderBattle(){
+  const step = E.steps[E.i];
+  let q = "";
+  if(step==="m"){
+    q = `<div class="q"><h2>${esc(E.w.b)} の意味は？</h2><div class="opts">${meaningOptions(E.w).map(o=>`<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div></div>`;
+  }else{
+    const ex = step==="p" ? E.w.pe : E.w.ppe;
+    const nm = step==="p" ? "過去形" : "過去分詞";
+    q = ex && ex.t
+      ? `<div class="q"><h2>${nm}にして空欄に入れよう（${esc(E.w.b)}）</h2><p class="sent">${sentenceHTML(ex,null,false)}</p><div id="ansArea"></div></div>`
+      : `<div class="q"><h2>${esc(E.w.b)} の${nm}は？</h2><div id="ansArea"></div></div>`;
+  }
+  $("#app").innerHTML = battleTop() + q + `<div id="fb"></div>`;
+  if(E.anim==="appear") sfx("appear");
+  E.anim = "";
+  $("#back").onclick = ()=>{ save(); home(); };
+  wireMusicButton();
+  if(step==="m"){
+    document.querySelectorAll(".opt").forEach(bt=>bt.onclick=()=>answerMeaning(bt));
+  }else{
+    E.tries = 0; E.built = [];
+    renderAnswerArea();
+  }
+}
+function renderAnswerArea(){
+  const step = E.steps[E.i];
+  const ans = ansOf(E.w, step);
+  const area = $("#ansArea");
+  if(E.mode==="choice"){
+    area.innerHTML = `<div class="opts">${formOptions(E.w, step).map(o=>`<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
+    area.querySelectorAll(".opt").forEach(bt=>bt.onclick=()=>{
+      area.querySelectorAll(".opt").forEach(x=>{x.disabled=true; if(x.dataset.v===ans) x.classList.add("right");});
+      const ok = bt.dataset.v===ans; if(!ok) bt.classList.add("wrong");
+      judge(ok, bt.dataset.v);
+    });
+  }else if(E.mode==="tiles"){
+    const tiles = tilesFor(ans, E.w);
+    E.tiles = tiles.map((ch,i)=>({ch,i,used:false}));
+    drawTiles();
+  }else{
+    area.innerHTML = `<input class="type" id="typed" type="text" inputmode="latin" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="答えを入力"><div class="err" id="err"></div><div id="hintBox"></div><button class="btn" id="send">これで答える</button>`;
+    const inp = $("#typed");
+    inp.focus({preventScroll:true});
+    inp.oninput = ()=>{ $("#err").textContent=""; };
+    inp.onkeydown = e=>{ if(e.key==="Enter"){ e.preventDefault(); submitTyped(); } };
+    $("#send").onclick = submitTyped;
+  }
+}
+function drawTiles(){
+  const area = $("#ansArea");
+  area.innerHTML = `<div class="slots" aria-label="作った答え">${E.built.map((t,k)=>`<button class="slot" data-k="${k}" aria-label="${esc(t.ch)} を外す">${esc(t.ch)}</button>`).join("")}</div>
+    <div class="tiles">${E.tiles.map(t=>`<button class="tile" data-i="${t.i}" ${t.used?"disabled":""}>${esc(t.ch)}</button>`).join("")}</div>
+    <div class="err" id="err"></div>
+    <div class="row"><button class="btn sec" id="clr">やり直す</button><button class="btn" id="send">これで答える</button></div>`;
+  area.querySelectorAll(".tile").forEach(bt=>bt.onclick=()=>{
+    sfx("tap"); const t = E.tiles.find(x=>x.i==bt.dataset.i); t.used=true; E.built.push(t); drawTiles();
+  });
+  area.querySelectorAll(".slot").forEach(bt=>bt.onclick=()=>{
+    const t = E.built.splice(+bt.dataset.k,1)[0]; t.used=false; drawTiles();
+  });
+  $("#clr").onclick = ()=>{ E.built.forEach(t=>t.used=false); E.built=[]; drawTiles(); };
+  $("#send").onclick = ()=>{
+    if(!E.built.length){ $("#err").textContent="タイルをタップして答えを作ろう"; return; }
+    const step = E.steps[E.i]; const ans = ansOf(E.w, step);
+    const v = E.built.map(t=>t.ch).join("");
+    area.querySelectorAll("button").forEach(x=>x.disabled=true);
+    judge(v===ans, v);
+  };
+}
+function submitTyped(){
+  const v = $("#typed").value.trim().toLowerCase().replace(/\s+/g," ");
+  if(!v){ $("#err").textContent="答えを入力してから押してね"; return; }
+  if(!/^[a-z' ]+$/.test(v)){ $("#err").textContent="英語のアルファベットで入力してね"; return; }
+  const step = E.steps[E.i]; const ans = ansOf(E.w, step);
+  if(accOf(E.w, step).includes(v)){ lockTyped(); judge(true, v); return; }
+  E.tries++;
+  if(E.tries===1){
+    E.hinted = true;
+    $("#hintBox").innerHTML = `<div class="hint">ヒント：${esc(SP_INFO[E.sp].hint)}</div>`;
+    $("#err").textContent = "ちがうみたい。ヒントを見てもう一度";
+    $("#typed").select();
+  }else if(E.tries===2){
+    $("#hintBox").innerHTML += `<div class="hint">ヒント：最初の文字は「${esc(ans[0])}」</div>`;
+    $("#err").textContent = "おしい。あと1回";
+    $("#typed").select();
+  }else{
+    lockTyped(); judge(false, v);
+  }
+}
+function lockTyped(){ $("#typed").disabled = true; $("#send").disabled = true; }
+
+function answerMeaning(bt){
+  const ok = bt.dataset.v===E.w.m;
+  document.querySelectorAll(".opt").forEach(x=>{x.disabled=true; if(x.dataset.v===E.w.m) x.classList.add("right");});
+  if(!ok) bt.classList.add("wrong");
+  logAnswer(ok);
+  if(!ok) E.wrong = true;
+  session.streak = ok ? session.streak+1 : 0;
+  sfx(ok?"ok":"ng");
+  const head = ok ? "なかよくなれた！" : "おしい！";
+  $("#fb").innerHTML = `<div class="fb ${ok?"ok":"ng"}"><p class="head">${head}</p><p>${esc(E.w.b)} は「${esc(E.w.m)}」。</p></div><button class="btn" id="next">つぎへ</button>`;
+  $("#next").onclick = ()=>{ E.i++; renderBattle(); };
+  $("#next").focus({preventScroll:true});
+}
+function judge(ok, given){
+  const step = E.steps[E.i];
+  const ex = step==="p" ? E.w.pe : E.w.ppe;
+  const ans = ansOf(E.w, step);
+  logAnswer(ok);
+  if(!ok) E.wrong = true;
+  session.streak = ok ? session.streak+1 : 0;
+  sfx(ok?"ok":"ng");
+  const hasEx = ex && ex.t;
+  if(hasEx) $(".sent").innerHTML = sentenceHTML(ex, ans, true);
+  let head;
+  if(ok){ head = step==="p" ? "正解！進化するよ" : "正解！さいごの進化だ"; }
+  else  { head = `おしい！正しくは ${esc(ans)}`; }
+  const yours = (!ok && given) ? `<p>あなたの答え：${esc(given)}</p>` : "";
+  $("#fb").innerHTML = `<div class="fb ${ok?"ok":"ng"}"><p class="head">${head}</p>${yours}${hasEx ? `<p>${esc(explain(ex, ans))}</p>${ex.note?`<p>${esc(ex.note)}</p>`:""}${ex.ja?`<p class="ja">${esc(ex.ja)}</p>`:""}` : `<p>${esc(E.w.b)} – ${esc(E.w.p)} – ${esc(E.w.pp)}</p>`}</div><button class="btn" id="next">${ok?"進化させる":"つぎへ"}</button>`;
+  $("#next").onclick = ()=>{
+    if(ok){ E.stage = step==="p"?1:2; E.anim="evolve"; sfx("evolve"); }
+    E.i++;
+    if(E.i>=E.steps.length) finish(); else renderBattle();
+  };
+  $("#next").focus({preventScroll:true});
+}
+function finish(){
+  const r = E.r, now = Date.now();
+  const firstMeet = !r.met;
+  r.met = true;
+  r.best = Math.max(r.best, E.stage);
+  let msg;
+  if(E.wrong){
+    r.nk = Math.max(0, r.nk-1); r.streak = 0; r.wrong++;
+    r.due = now + 3*DAY;
+    session.retry.push({b:E.w.b, at:session.count+3});
+    msg = `${E.w.b} は逃げてしまった。少しあとと、3日後にまた出てくるよ。`;
+  }else if(E.review){
+    msg = `おさらい完了。${E.w.b} は元気いっぱい。`;
+  }else if(E.hinted){
+    r.due = now + DAY;
+    msg = `${E.w.b} が仲間になった！ヒントを使ったので、なつき度はそのまま。明日また会おう。`;
+  }else{
+    r.nk = Math.min(6, r.nk+1); r.streak++;
+    const iv = [1,3,7,14,30][Math.min(r.streak-1,4)];
+    r.due = now + iv*DAY;
+    msg = r.nk===6 ? `${E.w.b} が卒業した！図鑑に金色の枠が付いたよ。` : `${E.w.b} が仲間になった！なつき度が上がった。次は${iv}日後に会えるよ。`;
+    if(firstMeet) msg = `${E.w.b} が仲間になって、図鑑に登録された！`;
+  }
+  const added = checkUnlock();
+  if(added) msg += ` 新しいモンスターが${added}匹、草むらに現れた！`;
+  STORY.forEach((c,i)=>{ if(chapterOpen(i) && !S.story[i] && !S.storySeen[i]){ S.storySeen[i] = true; msg += ` ストーリー第${i+1}章が読めるようになった！`; } });
+  save();
+  const w = E.w, sp = E.sp;
+  const why = {AAA:"3つとも同じ形", ABB:"過去と過去分詞が同じ形", ABA:"過去分詞で原形の形に戻る", ABC:"3つとも違う形"}[sp];
+  $("#app").innerHTML = `
+    <div class="bar"><button class="link" id="back">‹ ホーム</button><span class="chip">連続正解 ${session.streak}</span>${musicButton()}</div>
+    <div class="field">
+      <span class="tag">正体がわかった！</span>
+      <div class="reveal">
+        <figure>${monsterSVG(sp,0,"appear",w.b)}<figcaption>${esc(w.b)}</figcaption></figure>
+        <figure>${monsterSVG(sp,1,"appear",w.p)}<figcaption>${esc(w.p)}</figcaption></figure>
+        <figure>${monsterSVG(sp,2,"appear",w.pp)}<figcaption>${esc(w.pp)}</figcaption></figure>
+      </div>
+      <div class="who">${SP_INFO[sp].name}だった！<small>${why}なかま（${esc(w.m)}）</small></div>
+      ${hearts(r.nk)}
+    </div>
+    <div class="fb ${E.wrong?"ng":"ok"}"><p class="head">${E.wrong?"またね…":"やったね！"}</p><p>${esc(msg)}</p></div>
+    <button class="btn" id="more">次のモンスターを探す</button><button class="btn sec" id="home2">ホームにもどる</button>`;
+  sfx(E.wrong ? "bye" : "fanfare");
+  wireMusicButton();
+  $("#back").onclick = home;
+  $("#more").onclick = startEncounter;
+  $("#home2").onclick = home;
+  $("#more").focus({preventScroll:true});
+}
+
+/* ---------- ストーリー ---------- */
+/* 空欄は [原形:p または pp:文法:手がかり1;手がかり2] 。答えを決めたいときは最後に :答え;別解 */
+const STORY = [
+ {title:"モンスターの村へ", lines:[
+  [`Last Sunday, I [go:p:past:Last Sunday] to a small village deep in the forest.`, `先週の日曜日、私は森の奥にある小さな村へ行った。`],
+  [`At the gate, I [see:p:narr:] a round pink monster wearing a ribbon.`, `門のところで、リボンをつけた丸いピンクのモンスターを見かけた。`],
+  [`"You are the first human who has ever [come:pp:perfect:has ever] here," it [say:p:narr:] with a smile.`, `「ここに来た人間は、きみが初めてだよ」と、その子はにっこり笑って言った。`],
+  [`Its name was Momo. Momo [take:p:narr:] me to a little house [make:pp:participle:house] of cookies.`, `その子の名前はモモ。モモは私を、クッキーでできた小さな家へ連れて行ってくれた。`],
+  [`Inside, a yellow monster named Sunny [give:p:narr:] me a cup of warm tea.`, `中では、サニーという黄色いモンスターが温かいお茶を出してくれた。`],
+  [`"This tea is [know:pp:passive:is] as the magic tea of our village," Sunny explained.`, `「このお茶は、村の魔法のお茶として知られているんだ」とサニーは説明した。`],
+  [`Later, I [find:p:past:Later] out that the monsters had already [eat:pp:pastPerfect:had already] half of the roof!`, `あとで、モンスターたちがすでに屋根の半分を食べてしまっていたことが分かった！`]
+ ]},
+ {title:"村の市場", lines:[
+  [`The next morning, Momo [tell:p:past:The next morning] me about the village market.`, `次の朝、モモが村の市場のことを教えてくれた。`],
+  [`We [run:p:agree:was] all the way there because it was already crowded.`, `もう混んでいたので、私たちはずっと走っていった。`],
+  [`I [buy:p:narr:] three shiny apples and [put:p:narr:] them in my bag.`, `私はぴかぴかのリンゴを3つ買って、かばんに入れた。`],
+  [`A blue monster named Drop had [cut:pp:pastPerfect:had] some flowers from his garden and [bring:pp:pastPerfect:had] them to sell.`, `ドロップという青いモンスターが、庭の花を切って売りに持ってきていた。`],
+  [`"I have [read:pp:perfect:have] every book in this village," Drop said proudly.`, `「ぼくはこの村の本を全部読んだことがあるんだ」とドロップは得意げに言った。`],
+  [`I [think:p:agree:was] he was joking, but he wasn't.`, `冗談だと思ったけど、そうではなかった。`],
+  [`We [have:p:narr:] lunch together under a big tree.`, `私たちは大きな木の下で一緒にお昼を食べた。`],
+  [`By the end of the day, Drop had [become:pp:pastPerfect:had] my best friend.`, `その日の終わりには、ドロップは私の親友になっていた。`]
+ ]},
+ {title:"歌のお祭り", lines:[
+  [`That evening, I [hear:p:past:That evening] music from the village square.`, `その夜、村の広場から音楽が聞こえた。`],
+  [`Many monsters had [leave:pp:pastPerfect:had] their houses to join the festival.`, `たくさんのモンスターが、お祭りに加わるために家を出てきていた。`],
+  [`There I [meet:p:narr:] a green monster named Leafy.`, `そこで私は、リーフィーという緑のモンスターに出会った。`],
+  [`Leafy [speak:p:agree:were] very softly, but her songs were powerful.`, `リーフィーはとても小さな声で話したけれど、歌は力強かった。`],
+  [`"This song was [write:pp:passive:was] by my grandmother," she said.`, `「この歌は私のおばあちゃんが書いたの」とリーフィーは言った。`],
+  [`She [teach:p:narr:] me the words, and we [sing:p:narr:] it together.`, `リーフィーが歌詞を教えてくれて、私たちは一緒に歌った。`],
+  [`I have never [feel:pp:perfect:have never] so happy before!`, `こんなに楽しい気持ちになったのは初めて！`],
+  [`Suddenly, a strong wind [catch:p:agree:ran] my hat, and Leafy ran after it.`, `突然、強い風が帽子をさらい、リーフィーが追いかけてくれた。`],
+  [`"Have you ever [do:pp:perfect:Have;ever] anything this fun?" Drop asked.`, `「こんなに楽しいこと、今までにしたことある？」とドロップがたずねた。`]
+ ]},
+ {title:"湖の朝", lines:[
+  [`I [sleep:p:past:that night] very well that night.`, `その夜はとてもよく眠れた。`],
+  [`In the morning, the village bell [ring:p:past:In the morning] at six.`, `朝6時に、村の鐘が鳴った。`],
+  [`The sun had just [begin:pp:pastPerfect:had just] to rise when we arrived at the lake.`, `私たちが湖に着いたとき、太陽はちょうど昇り始めたところだった。`],
+  [`Sunny [fly:p:narr:] over the water with her little wings.`, `サニーが小さな羽で湖の上を飛んだ。`],
+  [`"I have [swim:pp:perfect:have] in this lake since I was a baby," Drop said.`, `「ぼくは赤ちゃんのころから、この湖で泳いでいるんだ」とドロップが言った。`],
+  [`We [sit:p:narr:] on a rock and [drink:p:narr:] warm milk.`, `私たちは岩に座って、温かいミルクを飲んだ。`],
+  [`Momo [stand:p:narr:] up and pointed at the sky. A rainbow!`, `モモが立ち上がって空を指さした。虹だ！`],
+  [`I have [keep:pp:perfect:have;ever since] a photo of that rainbow ever since.`, `それ以来ずっと、私はその虹の写真を持っている。`],
+  [`I think I have [get:pp:perfect:have] used to life in the village.`, `村での暮らしにも、すっかり慣れてきた気がする。`]
+ ]},
+ {title:"ボート大会", lines:[
+  [`A boat race is [hold:pp:passive:is] on the lake every summer.`, `毎年夏、湖でボート大会が開かれる。`],
+  [`Drop and I [spend:p:narr:] a whole week making a boat.`, `ドロップと私は、まる1週間かけてボートを作った。`],
+  [`Our boat was [build:pp:passive:was] with wood from the forest.`, `私たちのボートは森の木で作られた。`],
+  [`Momo [lend:p:narr:] us her paint, so we made it pink and blue.`, `モモが絵の具を貸してくれたので、ピンクと青に塗った。`],
+  [`Sunny had [send:pp:pastPerfect:had] invitations to every monster in the village.`, `サニーは村じゅうのモンスターに招待状を送っていた。`],
+  [`Some monsters [sell:p:narr:] snacks, and I [pay:p:narr:] ten coins for a cookie.`, `お菓子を売るモンスターもいて、私はクッキーにコインを10枚払った。`],
+  [`We almost [lose:p:narr:] the race because of a big wave, but in the end we [win:p:narr:]!`, `大きな波のせいで負けそうになったけど、最後には私たちが勝った！`],
+  [`Finally, I [understand:p:narr:] why everyone loved this village so much.`, `やっと、みんながこの村を大好きな理由が分かった。`]
+ ]},
+ {title:"嵐の夜", lines:[
+  [`One night, a big storm [hit:p:past:One night] the village.`, `ある夜、大きな嵐が村を襲った。`],
+  [`We [shut:p:narr:] all the windows and doors.`, `私たちは窓とドアを全部閉めた。`],
+  [`Leafy's grandmother [let:p:narr:] us stay in her house.`, `リーフィーのおばあちゃんが、家に泊めてくれた。`],
+  [`She [show:p:narr:] us an old map that was [draw:pp:passive:was] by her grandfather.`, `おばあちゃんは、自分のおじいさんが描いた古い地図を見せてくれた。`],
+  [`"The magic tea tree has [grow:pp:perfect:has] here for 300 years," she said.`, `「魔法のお茶の木は、300年間ここで育ってきたのよ」とおばあちゃんは言った。`],
+  [`Suddenly, the wind [throw:p:narr:] a branch against the window.`, `突然、風が枝を窓にたたきつけた。`],
+  [`Nobody was [hurt:pp:passive:was], but the glass was broken.`, `けがをした人はいなかったけれど、ガラスは割れてしまった。`],
+  [`Fixing the window [cost:p:past:the next day] us fifty coins the next day.`, `次の日、窓の修理にはコインが50枚かかった。`],
+  [`Before going to bed, I [set:p:narr:] my alarm for five o'clock.`, `寝る前に、私は目覚ましを5時にセットした。`]
+ ]},
+ {title:"消えた葉っぱ", lines:[
+  [`I [wake:p:agree:heard] up early because I heard a strange sound.`, `変な音が聞こえたので、私は早く目が覚めた。`],
+  [`Someone had [hide:pp:pastPerfect:had] all the leaves of the magic tea tree!`, `誰かが、魔法のお茶の木の葉を全部隠してしまっていた！`],
+  [`We [ride:p:narr:] our bikes around the village to look for them.`, `私たちは自転車で村じゅうを探し回った。`],
+  [`The sun had already [rise:pp:pastPerfect:had already] when we found a trail of leaves.`, `葉っぱの跡を見つけたとき、太陽はもう昇っていた。`],
+  [`Some of the leaves were [bite:pp:passive:were] by tiny teeth.`, `葉っぱのいくつかは、小さな歯でかじられていた。`],
+  [`The trail led to a small house with a [break:pp:participleBefore:window] window.`, `跡は、窓の割れた小さな家へと続いていた。`],
+  [`Inside, a little monster [wear:p:narr:] a scarf made of tea leaves!`, `中では、小さなモンスターがお茶の葉でできたマフラーを巻いていた！`],
+  [`"I'm sorry. I [forget:p:narr:] to ask," he said. "It was so cold that I [choose:p:agree:was] the warmest leaves."`, `「ごめんなさい。聞くのを忘れてたんだ」とその子は言った。「とても寒かったから、いちばん暖かい葉っぱを選んだの」`],
+  [`Leafy's father [drive:p:narr:] us back to the tree in his old car with all the leaves.`, `リーフィーのお父さんが、葉っぱと一緒に私たちを古い車でお茶の木まで送ってくれた。`]
+ ]},
+ {title:"お茶の木を救え", lines:[
+  [`The tea tree was still weak, and many branches had [fall:pp:pastPerfect:had] to the ground.`, `お茶の木はまだ弱っていて、たくさんの枝が地面に落ちてしまっていた。`],
+  [`I finally understood what Leafy's grandmother [mean:p:agree:understood] by "magic."`, `リーフィーのおばあちゃんが「魔法」という言葉で何を言いたかったのか、やっと分かった。`],
+  [`We [seek:p:narr:] advice from the oldest monster in the forest.`, `私たちは、森でいちばん年上のモンスターに助言を求めた。`],
+  [`She [lead:p:narr:] us to a secret spring deep in the woods.`, `その人は、森の奥にある秘密の泉へ私たちを案内してくれた。`],
+  [`"Many monsters have been [mislead:pp:perfectPassive:have been] by old stories about this spring," she warned.`, `「この泉の古い言い伝えに、たくさんのモンスターが惑わされてきたのよ」と、その人は注意した。`],
+  [`A huge snake [lie:p:narr:] across the path, sleeping in the sun.`, `大きなヘビが、日なたで眠りながら道の上に横たわっていた。`],
+  [`Drop carefully [lay:p:narr:] a blanket over it so it wouldn't wake up.`, `ドロップは、ヘビが起きないようにそっと毛布をかけた。`],
+  [`"Long ago, monsters had [fight:pp:pastPerfect:had] over this water," she said.`, `「昔、モンスターたちはこの水をめぐって争っていたの」と、その人は言った。`],
+  [`After we got home, we [feed:p:agree:got] the tree with the spring water.`, `家に帰ってから、私たちは泉の水をお茶の木にあげた。`],
+  [`Every problem was [deal:pp:passive:was] with together.`, `どの問題も、みんなで一緒に対処した。`]
+ ]},
+ {title:"森の大冒険", lines:[
+  [`One day, news of a hidden treasure [spread:p:past:One day] through the village.`, `ある日、隠された宝物のうわさが村じゅうに広まった。`],
+  [`Sunny [bet:p:agree:would] us a cookie that she would find it first.`, `サニーは、自分が先に見つける方にクッキーを1枚賭けた。`],
+  [`We [dig:p:narr:] holes all over the hill.`, `私たちは丘のあちこちに穴を掘った。`],
+  [`My shovel [strike:p:narr:] something hard. It was an old metal box!`, `私のシャベルが何か硬いものに当たった。古い金属の箱だ！`],
+  [`It was so old that its lid was [bend:pp:passive:was].`, `とても古くて、ふたは曲がっていた。`],
+  [`When we opened it, bright light [shoot:p:agree:opened] out of the box.`, `箱を開けると、まぶしい光が飛び出した。`],
+  [`It was a crystal that had [shine:pp:pastPerfect:had] under the ground for 100 years.`, `それは100年間、地面の下で輝いていた水晶だった。`],
+  [`Sunny was so excited that she [swing:p:agree:was] her tail and [burst:p:agree:was] into laughter.`, `サニーは大喜びで、しっぽを振って笑い出した。`],
+  [`Some mud had [stick:pp:pastPerfect:had] to the crystal, so we washed it in the river.`, `水晶には泥がこびりついていたので、川で洗った。`]
+ ]},
+ {title:"冬の事件", lines:[
+  [`Winter came, and the lake [freeze:p:agree:came] completely.`, `冬が来て、湖はすっかり凍った。`],
+  [`Skating on the lake was [forbid:pp:passive:was] because the ice was thin.`, `氷が薄かったので、湖でのスケートは禁止されていた。`],
+  [`One morning, we found that someone had [steal:pp:pastPerfect:had] the crystal from the village hall!`, `ある朝、誰かが村の集会所から水晶を盗んでいたことが分かった！`],
+  [`The whole village was [shake:pp:passive:was] by the news.`, `村じゅうが、その知らせに動揺した。`],
+  [`The thief was the little monster from before. His scarf had [shrink:pp:pastPerfect:had] in the wash, and he was very cold.`, `犯人は、前に会ったあの小さなモンスターだった。洗ったらマフラーが縮んでしまい、とても寒かったのだ。`],
+  [`He [weep:p:agree:said] and said sorry again and again.`, `その子は泣いて、何度も何度もあやまった。`],
+  [`Everyone [forgive:p:agree:gave] him, and we gave him a warm blanket.`, `みんなはその子を許し、暖かい毛布をあげた。`],
+  [`Then we [sweep:p:narr:] the snow off his roof together.`, `それから一緒に、その子の家の屋根の雪をはいた。`],
+  [`The crystal had almost [sink:pp:pastPerfect:had almost] into the snow, but Sunny found it just in time.`, `水晶は雪の中に沈みかけていたけれど、サニーがぎりぎりで見つけた。`],
+  [`Together, we had [overcome:pp:pastPerfect:had] another problem.`, `私たちはまた一つ、みんなで問題を乗り越えたのだ。`]
+ ]},
+ {title:"春の約束", lines:[
+  [`By spring, the tea tree had [undergo:pp:pastPerfect:had] a big change. It was covered with new leaves!`, `春になると、お茶の木は大きく変わっていた。新しい葉でいっぱいだ！`],
+  [`But a new problem [arise:p:narr:]. It was time for me to go home.`, `でも、新しい問題が起きた。私が家に帰る時が来たのだ。`],
+  [`I [withdraw:p:narr:] all my coins from the village bank to buy presents.`, `私はおみやげを買うために、村の銀行からコインを全部引き出した。`],
+  [`Leafy [tear:p:agree:gave] a page out of her song book and gave it to me.`, `リーフィーは歌の本を1ページ破って、私にくれた。`],
+  [`"A baby monster was [bear:pp:passive:was:born] this morning!" Momo shouted.`, `「今朝、赤ちゃんモンスターが生まれたよ！」とモモが叫んだ。`],
+  [`"Her mother has [bear:pp:perfect:has:borne] five babies," Drop added.`, `「そのお母さんは、これまでに5匹の赤ちゃんを産んでいるんだ」とドロップが付け加えた。`],
+  [`I will never forget my friends in the monster village.`, `モンスターの村の友だちのことは、ずっと忘れない。`]
+ ]}
+];
+
+function parseLine(t){
+  const segs = [], re = /\[([a-z]+):(pp|p):([A-Za-z]+):([^\]:]*)(?::([^\]]*))?\]/g;
+  let last = 0, m;
+  while((m = re.exec(t))){
+    segs.push({s:t.slice(last, m.index)});
+    segs.push({b:m[1], step:m[2], g:m[3], c:m[4] ? m[4].split(";") : [], acc:m[5] ? m[5].split(";") : null});
+    last = re.lastIndex;
+  }
+  segs.push({s:t.slice(last)});
+  return segs;
+}
+function chapterWords(ch){ return [...new Set(STORY[ch].lines.flatMap(l=>parseLine(l[0]).filter(x=>x.b).map(x=>x.b)))]; }
+function chapterMissing(ch){ return chapterWords(ch).filter(b=>BY[b] && !S.off[b] && !(S.words[b] && S.words[b].met)); }
+function chapterOpen(ch){ return chapterMissing(ch).length===0 && (ch===0 || !!S.story[ch-1]); }
+function newChapterReady(){ return STORY.some((c,i)=>chapterOpen(i) && !S.story[i]); }
+
+function storyList(){
+  SCREEN = "storylist";
+  const rows = STORY.map((c,i)=>{
+    const open = chapterOpen(i), best = S.story[i];
+    let right, sub;
+    if(best){ sub = `クリア　${"★".repeat(best)}${"☆".repeat(3-best)}`; right = `<button class="mini" data-ch="${i}">もう一度</button>`; }
+    else if(open){ sub = "読めるよ！"; right = `<button class="mini" data-ch="${i}">読む</button>`; }
+    else if(i>0 && !S.story[i-1]){ sub = "前の章をクリアすると読めるよ"; right = ""; }
+    else { const n = chapterMissing(i).length; sub = `あと${n}匹に出会うと読めるよ`; right = ""; }
+    return `<div class="wrow ${open||best?"":"off"}"><div><b>第${i+1}章　${esc(c.title)}</b><br><small>${sub}</small></div><div class="wbtn">${right}</div></div>`;
+  }).join("");
+  $("#app").innerHTML = `<div class="bar"><button class="link" id="back">‹ ホーム</button><span class="chip">ストーリー</span>${musicButton()}</div>
+    <p class="sub" style="margin-top:8px">モンスターの村の物語。空欄に、仲間にしたモンスターの単語を正しい形で入れて読み進めよう。</p>
+    <div class="wl">${rows}</div>`;
+  wireMusicButton();
+  $("#back").onclick = home;
+  document.querySelectorAll("[data-ch]").forEach(b=>b.onclick = ()=>storyStart(+b.dataset.ch));
+}
+
+let ST = null;
+function storyStart(ch){
+  if(lockActive()) return lockScreen();
+  ST = {ch, li:0, bi:0, miss:0, n:0, tries:0, lines: STORY[ch].lines.map(l=>({segs:parseLine(l[0]), ja:l[1]}))};
+  storyRender();
+}
+function blanksOf(line){ return line.segs.filter(x=>x.b); }
+function lineHTML(line, upto, showCues){
+  let k = 0;
+  return line.segs.map(x=>{
+    if(!x.b) return showCues ? highlight(x.s, blanksOf(line).flatMap(b=>b.c)) : esc(x.s);
+    const i = k++;
+    const ans = x.acc ? x.acc[0] : (x.step==="p" ? BY[x.b].p : BY[x.b].pp);
+    if(i < upto) return `<span class="ans">${esc(ans)}</span>`;
+    if(i === upto) return `<span class="blank" aria-label="空欄">？</span>`;
+    return `<span class="gap" aria-label="あとの空欄">（${esc(x.b)}）</span>`;
+  }).join("");
+}
+function storyRender(){
+  SCREEN = "story";
+  const line = ST.lines[ST.li], bl = blanksOf(line);
+  const prev = ST.li>0 ? `<p class="prevline">${lineHTML(ST.lines[ST.li-1], 99, false)}</p>` : "";
+  const head = `<div class="bar"><button class="link" id="back">‹ もどる</button><span class="chip">第${ST.ch+1}章　${ST.li+1}／${ST.lines.length}${timeChip()}</span>${musicButton()}</div>
+    <div class="prog" aria-hidden="true"><i style="width:${ST.li/ST.lines.length*100}%"></i></div>`;
+  if(!bl.length){
+    $("#app").innerHTML = head + `<div class="q">${prev}<p class="sent">${esc(line.segs[0].s)}</p><p class="ja">${esc(line.ja)}</p></div><button class="btn" id="next">つぎへ</button>`;
+    wireMusicButton(); $("#back").onclick = storyList;
+    $("#next").onclick = storyNext;
+    return;
+  }
+  const x = bl[ST.bi], w = BY[x.b];
+  const nm = x.step==="p" ? "過去形" : "過去分詞";
+  $("#app").innerHTML = head + `<div class="q">${prev}<h2>${esc(x.b)} を正しい形にして入れよう</h2><p class="sent" id="sline">${lineHTML(line, ST.bi, false)}</p><div id="ansArea"></div></div><div id="fb"></div>`;
+  wireMusicButton(); $("#back").onclick = storyList;
+  const ans = x.acc ? x.acc[0] : (x.step==="p" ? w.p : w.pp);
+  const acc = x.acc || (x.step==="p" ? [w.p] : [w.pp, ...(w.ppAlt||[])]);
+  const r = S.words[x.b], mode = modeFor(r ? r.nk : 0);
+  const area = $("#ansArea");
+  ST.tries = 0;
+  if(mode==="choice"){
+    area.innerHTML = `<div class="opts">${formOptions(w, x.step, ans, acc).map(o=>`<button class="opt" data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
+    area.querySelectorAll(".opt").forEach(bt=>bt.onclick = ()=>{
+      area.querySelectorAll(".opt").forEach(z=>{ z.disabled = true; if(acc.includes(z.dataset.v)) z.classList.add("right"); });
+      const ok = acc.includes(bt.dataset.v); if(!ok) bt.classList.add("wrong");
+      storyJudge(ok, bt.dataset.v, x, ans);
+    });
+  }else if(mode==="tiles"){
+    const tiles = tilesFor(ans, w).map((ch,i)=>({ch,i,used:false}));
+    let built = [];
+    const draw = ()=>{
+      area.innerHTML = `<div class="slots">${built.map((t,k)=>`<button class="slot" data-k="${k}" aria-label="${esc(t.ch)} を外す">${esc(t.ch)}</button>`).join("")}</div>
+        <div class="tiles">${tiles.map(t=>`<button class="tile" data-i="${t.i}" ${t.used?"disabled":""}>${esc(t.ch)}</button>`).join("")}</div>
+        <div class="err" id="err"></div><div class="row"><button class="btn sec" id="clr">やり直す</button><button class="btn" id="send">これで答える</button></div>`;
+      area.querySelectorAll(".tile").forEach(b=>b.onclick = ()=>{ sfx("tap"); const t = tiles[+b.dataset.i]; t.used = true; built.push(t); draw(); });
+      area.querySelectorAll(".slot").forEach(b=>b.onclick = ()=>{ const t = built.splice(+b.dataset.k,1)[0]; t.used = false; draw(); });
+      $("#clr").onclick = ()=>{ built.forEach(t=>t.used=false); built = []; draw(); };
+      $("#send").onclick = ()=>{
+        if(!built.length){ $("#err").textContent = "タイルをタップして答えを作ろう"; return; }
+        const v = built.map(t=>t.ch).join("");
+        area.querySelectorAll("button").forEach(z=>z.disabled = true);
+        storyJudge(acc.includes(v), v, x, ans);
+      };
+    };
+    draw();
+  }else{
+    area.innerHTML = `<input class="type" id="typed" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="答えを入力"><div class="err" id="err"></div><div id="hintBox"></div><button class="btn" id="send">これで答える</button>`;
+    const inp = $("#typed");
+    inp.focus({preventScroll:true});
+    const submit = ()=>{
+      const v = inp.value.trim().toLowerCase().replace(/\s+/g," ");
+      if(!v){ $("#err").textContent = "答えを入力してから押してね"; return; }
+      if(!/^[a-z' ]+$/.test(v)){ $("#err").textContent = "英語のアルファベットで入力してね"; return; }
+      if(acc.includes(v)){ inp.disabled = true; $("#send").disabled = true; storyJudge(true, v, x, ans); return; }
+      ST.tries++;
+      if(ST.tries===1){ $("#hintBox").innerHTML = `<div class="hint">ヒント：${nm}で、最初の文字は「${esc(ans[0])}」</div>`; $("#err").textContent = "ちがうみたい。もう一度"; inp.select(); }
+      else { inp.disabled = true; $("#send").disabled = true; storyJudge(false, v, x, ans); }
+    };
+    inp.oninput = ()=>{ $("#err").textContent = ""; };
+    inp.onkeydown = e=>{ if(e.key==="Enter"){ e.preventDefault(); submit(); } };
+    $("#send").onclick = submit;
+  }
+}
+function storyJudge(ok, given, x, ans){
+  ST.n++;
+  logAnswer(ok);
+  if(!ok){ ST.miss++; const r = S.words[x.b]; if(r && r.met){ r.due = Date.now(); } }
+  save();
+  sfx(ok ? "ok" : "ng");
+  const line = ST.lines[ST.li], last = ST.bi === blanksOf(line).length - 1;
+  $("#sline").innerHTML = last ? lineHTML(line, 99, true) : lineHTML(line, ST.bi+1, false);
+  const w = BY[x.b];
+  const note = w.ppe && w.ppe.note && (x.step==="pp" || x.b==="lie" || x.b==="lay") ? `<p>${esc(w.ppe.note)}</p>` : "";
+  const exp = explain({c:x.c, g:x.g}, ans);
+  $("#fb").innerHTML = `<div class="fb ${ok?"ok":"ng"}"><p class="head">${ok?"正解！":`おしい！正しくは ${esc(ans)}`}</p>${!ok&&given?`<p>あなたの答え：${esc(given)}</p>`:""}<p>${esc(exp)}</p>${note}${last?`<p class="ja">${esc(line.ja)}</p>`:""}</div><button class="btn" id="next">つぎへ</button>`;
+  $("#next").onclick = ()=>{
+    if(!last){ ST.bi++; storyRender(); } else storyNext();
+  };
+  $("#next").focus({preventScroll:true});
+}
+function storyNext(){
+  ST.li++; ST.bi = 0;
+  if(ST.li < ST.lines.length) storyRender(); else storyEnd();
+}
+function storyEnd(){
+  SCREEN = "storylist";
+  const stars = ST.miss===0 ? 3 : ST.miss<=2 ? 2 : 1;
+  S.story[ST.ch] = Math.max(S.story[ST.ch] || 0, stars);
+  save();
+  sfx("fanfare");
+  const text = ST.lines.map(l=>`<p class="sent" style="margin-top:10px">${lineHTML(l, 99, false)}</p><p class="ja" style="margin:0">${esc(l.ja)}</p>`).join("");
+  const nextOpen = ST.ch+1 < STORY.length && chapterOpen(ST.ch+1);
+  const nextMsg = ST.ch+1 >= STORY.length ? "これで物語はおしまい。全部読んでくれてありがとう！" :
+    nextOpen ? `第${ST.ch+2}章が読めるようになったよ。` : `第${ST.ch+2}章は、あと${chapterMissing(ST.ch+1).length}匹に出会うと読めるよ。`;
+  $("#app").innerHTML = `<div class="bar"><span class="chip">第${ST.ch+1}章　${esc(STORY[ST.ch].title)}</span>${musicButton()}</div>
+    <div class="fb ok"><p class="head">クリア！　${"★".repeat(stars)}${"☆".repeat(3-stars)}</p><p>${ST.n}問中 ${ST.n-ST.miss}問正解。${ST.miss?"間違えた単語は、草むらですぐにまた出てくるよ。":""}</p><p>${nextMsg}</p></div>
+    ${nextOpen ? `<button class="btn" id="goNext">第${ST.ch+2}章を読む</button>` : ""}
+    <button class="btn sec" id="list">ストーリーの一覧へ</button>
+    <div class="q"><h2>今回の物語</h2>${text}</div>`;
+  wireMusicButton();
+  if(nextOpen) $("#goNext").onclick = ()=>storyStart(ST.ch+1);
+  $("#list").onclick = storyList;
+}
+
+/* ---------- 遊び時間とロック ---------- */
+let SCREEN = "home", lastAct = Date.now();
+["pointerdown","keydown"].forEach(ev=>document.addEventListener(ev, ()=>{ lastAct = Date.now(); }, true));
+function timeRec(){
+  const k = todayKey();
+  if(!S.time || S.time.d!==k) S.time = {d:k, sec:0, ext:0};
+  return S.time;
+}
+function allowanceSec(){ return (S.settings.limit + timeRec().ext * S.settings.extend) * 60; }
+function lockActive(){ return !!S.auth && timeRec().sec >= allowanceSec(); }
+function remainingMin(){ return Math.max(0, Math.ceil((allowanceSec() - timeRec().sec)/60)); }
+function timeChip(){ return (S.auth && remainingMin()<=10) ? `　のこり${remainingMin()}分` : ""; }
+setInterval(()=>{
+  if((SCREEN==="battle"||SCREEN==="placement"||SCREEN==="story") && !document.hidden && Date.now()-lastAct < 60000){
+    const t = timeRec(); t.sec++;
+    if(t.sec % 10 === 0) save();
+  }
+}, 1000);
+
+function lockScreen(){
+  SCREEN = "lock";
+  save();
+  $("#app").innerHTML = `
+    <div class="bar"><button class="link" id="back">‹ ホーム</button>${musicButton()}</div>
+    <div class="field">
+      <svg class="mon" viewBox="-62 -56 124 100" role="img" aria-label="眠っているモンスター">
+        ${monsterSVG("AAA",2,"","").replace(/^<svg[^>]*>|<\/svg>$/g,"")}
+        <text x="34" y="-30" font-size="14" font-weight="800" fill="#8A7FA0">Z</text>
+        <text x="44" y="-42" font-size="11" font-weight="800" fill="#8A7FA0">z</text>
+      </svg>
+      <div class="who">モンスターたちがおねむになりました<small>今日はここまで。また明日遊ぼう。</small></div>
+    </div>
+    <div class="q">
+      <h2>保護者の方へ：${S.settings.extend}分延長する</h2>
+      <input class="type" id="pw" type="password" autocomplete="off" aria-label="保護者のパスワード" placeholder="パスワード">
+      <div class="err" id="err"></div>
+      <button class="btn" id="ext">延長する</button>
+    </div>`;
+  wireMusicButton();
+  $("#back").onclick = home;
+  const go = async ()=>{
+    const v = $("#pw").value;
+    if(!v){ $("#err").textContent = "パスワードを入力してください"; return; }
+    if(await checkPw(v)){ timeRec().ext++; save(); sfx("fanfare"); startEncounter(); }
+    else { $("#err").textContent = "パスワードがちがいます"; sfx("ng"); }
+  };
+  $("#pw").oninput = ()=>{ $("#err").textContent = ""; };
+  $("#pw").onkeydown = e=>{ if(e.key==="Enter"){ e.preventDefault(); go(); } };
+  $("#ext").onclick = go;
+}
+
+/* ---------- パスワード（ハッシュで保存） ---------- */
+async function sha(s){
+  if(window.crypto && crypto.subtle){
+    const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("");
+  }
+  let h1 = 0x811c9dc5, h2 = 0x1b873593;
+  for(let i=0;i<s.length;i++){ const c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619); h2 = Math.imul(h2 ^ c, 2246822507); }
+  return (h1>>>0).toString(16) + (h2>>>0).toString(16);
+}
+function randCode(){
+  const cs = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const a = new Uint32Array(8);
+  if(window.crypto && crypto.getRandomValues) crypto.getRandomValues(a); else for(let i=0;i<8;i++) a[i] = Math.floor(Math.random()*1e9);
+  const s = Array.from(a).map(x=>cs[x % cs.length]).join("");
+  return s.slice(0,4) + "-" + s.slice(4);
+}
+const normCode = s=>s.toUpperCase().replace(/[^A-Z0-9]/g,"");
+async function checkPw(pw){ return !!S.auth && (await sha(S.auth.salt + pw)) === S.auth.pw; }
+async function checkSpare(code){ return !!S.auth && (await sha(S.auth.salt + normCode(code))) === S.auth.spare; }
+async function setPw(pw){
+  const salt = randCode(), spare = randCode();
+  S.auth = {salt, pw: await sha(salt + pw), spare: await sha(salt + normCode(spare))};
+  save();
+  return spare;
+}
+function pwFields(title, btn){
+  return `<div class="q"><h2>${title}</h2>
+    <label class="fl">パスワード（4文字以上）<input class="type" id="p1" type="password" autocomplete="new-password"></label>
+    <label class="fl">もう一度<input class="type" id="p2" type="password" autocomplete="new-password"></label>
+    <div class="err" id="err"></div><button class="btn" id="setpw">${btn}</button></div>`;
+}
+function wirePwFields(after){
+  ["#p1","#p2"].forEach(s=>$(s).oninput = ()=>{ $("#err").textContent = ""; });
+  $("#setpw").onclick = async ()=>{
+    const a = $("#p1").value, b = $("#p2").value;
+    if(a.length < 4){ $("#err").textContent = "4文字以上にしてください"; return; }
+    if(a !== b){ $("#err").textContent = "2つのパスワードが一致しません"; return; }
+    const spare = await setPw(a);
+    showSpare(spare, after);
+  };
+}
+function showSpare(code, after){
+  $("#app").innerHTML = `
+    <div class="bar"><span class="chip">保護者メニュー</span></div>
+    <div class="q">
+      <h2>予備コードを控えてください</h2>
+      <p class="big" style="font-size:32px">${code}</p>
+      <p>パスワードを忘れたときは、このコードで新しいパスワードを設定できます。この画面を閉じると二度と表示されないので、紙などに書いて保管してください。</p>
+      <button class="btn" id="done">控えました</button>
+    </div>`;
+  $("#done").onclick = after;
+}
+
+/* ---------- 保護者メニューの入口 ---------- */
+function parentGate(){
+  SCREEN = "parent";
+  if(!S.auth){
+    $("#app").innerHTML = `<div class="bar"><button class="link" id="back">‹ ホーム</button><span class="chip">保護者メニュー</span></div>
+      <p class="sub" style="margin-top:12px">はじめに保護者用のパスワードを決めてください。遊び時間のロックと、単語の管理に使います。パスワードを決めると、1日${S.settings.limit}分のロックが有効になります。</p>
+      ${pwFields("パスワードを決める","この内容で決める")}`;
+    $("#back").onclick = home;
+    wirePwFields(parentMenu);
+    return;
+  }
+  $("#app").innerHTML = `<div class="bar"><button class="link" id="back">‹ ホーム</button><span class="chip">保護者メニュー</span></div>
+    <div class="q"><h2>パスワードを入力してください</h2>
+      <input class="type" id="pw" type="password" autocomplete="current-password" aria-label="パスワード">
+      <div class="err" id="err"></div>
+      <button class="btn" id="enter">開く</button>
+      <p style="text-align:center"><button class="link" id="forgot">パスワードを忘れた</button></p>
+    </div>`;
+  $("#back").onclick = home;
+  const go = async ()=>{
+    const v = $("#pw").value;
+    if(!v){ $("#err").textContent = "パスワードを入力してください"; return; }
+    if(await checkPw(v)) parentMenu(); else $("#err").textContent = "パスワードがちがいます";
+  };
+  $("#pw").oninput = ()=>{ $("#err").textContent = ""; };
+  $("#pw").onkeydown = e=>{ if(e.key==="Enter"){ e.preventDefault(); go(); } };
+  $("#enter").onclick = go;
+  $("#forgot").onclick = forgot;
+}
+function forgot(){
+  $("#app").innerHTML = `<div class="bar"><button class="link" id="back">‹ もどる</button><span class="chip">パスワードの再設定</span></div>
+    <div class="q"><h2>予備コードを入力してください</h2>
+      <input class="type" id="code" type="text" autocomplete="off" autocapitalize="characters" placeholder="XXXX-XXXX">
+      <div class="err" id="err"></div><button class="btn" id="chk">確かめる</button></div>`;
+  $("#back").onclick = parentGate;
+  $("#code").oninput = ()=>{ $("#err").textContent = ""; };
+  $("#chk").onclick = async ()=>{
+    const v = $("#code").value;
+    if(!v.trim()){ $("#err").textContent = "予備コードを入力してください"; return; }
+    if(!(await checkSpare(v))){ $("#err").textContent = "予備コードがちがいます"; return; }
+    $("#app").innerHTML = `<div class="bar"><span class="chip">パスワードの再設定</span></div>${pwFields("新しいパスワード","この内容で決める")}`;
+    wirePwFields(parentMenu);
+  };
+}
+
+/* ---------- 保護者メニュー ---------- */
+function dateKeyOf(d){ return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
+function parentMenu(){
+  SCREEN = "parent";
+  const t = timeRec();
+  const used = Math.floor(t.sec/60);
+  const days = [];
+  for(let i=13;i>=0;i--){ const d = new Date(Date.now()-i*DAY); const x = S.days[dateKeyOf(d)] || {n:0,c:0}; days.push({lab:`${d.getMonth()+1}/${d.getDate()}`, n:x.n, c:x.c}); }
+  const max = Math.max(10, ...days.map(d=>d.n));
+  const bars = days.map(d=>`<div class="bcol" title="${d.lab}：${d.n}問"><div class="bar2" style="height:${d.n/max*100}%"><div class="bok" style="height:${d.n?d.c/d.n*100:0}%"></div></div><small>${d.lab.split("/")[1]}</small></div>`).join("");
+  const worst = ALL.map(w=>({w, r:S.words[w.b]})).filter(x=>x.r && x.r.wrong>0).sort((a,b)=>b.r.wrong-a.r.wrong).slice(0,5);
+  const sel = (id, vals, cur)=>`<select id="${id}" class="sel">${vals.map(v=>`<option value="${v}" ${v==cur?"selected":""}>${v}分</option>`).join("")}</select>`;
+  $("#app").innerHTML = `
+    <div class="bar"><button class="link" id="back">‹ ホーム</button><span class="chip">保護者メニュー</span></div>
+
+    <div class="q"><h2>今日の遊び時間</h2>
+      <p style="margin:0">${used}分 ／ ${S.settings.limit + t.ext*S.settings.extend}分（延長 ${t.ext}回）</p>
+      <div class="pair" style="margin-top:8px">
+        <label>1日の上限${sel("lim",[30,45,60,90,120],S.settings.limit)}</label>
+        <label>1回の延長${sel("ext",[15,30,60],S.settings.extend)}</label>
+      </div>
+      <p class="note">数えるのは実際に遊んでいる時間だけです。毎日0時にリセットされます。</p>
+    </div>
+
+    <div class="q"><h2>最近14日の問題数（緑は正解）</h2>
+      <div class="chart">${bars}</div>
+      ${worst.length ? `<p style="margin:10px 0 2px;font-weight:700">間違いが多い単語</p><ol class="rank">${worst.map(x=>`<li>${esc(x.w.b)} – ${esc(x.w.p)} – ${esc(x.w.pp)}（${x.r.wrong}回）</li>`).join("")}</ol>` : `<p class="note">まだ間違えた単語はありません。</p>`}
+    </div>
+
+    <div class="q"><h2>新しいモンスターの登場</h2>
+      <p style="margin:0">登場済み ${Math.min(S.unlocked, BASE.length)}／${BASE.length}匹</p>
+      <label class="fl">出会った子のうち、手入力の段階の子がこの割合を超えたら5匹登場
+        <select id="ur" class="sel">${[50,70,90].map(v=>`<option value="${v}" ${v==S.settings.unlockRate?"selected":""}>${v}%</option>`).join("")}</select></label>
+      <button class="btn sec" id="unlockAll">すべて登場させる</button>
+    </div>
+    <button class="btn sec" id="words">単語の管理（${W.length}語が出題中）</button>
+    <button class="btn sec" id="recheck">実力チェックをやり直す</button>
+    <button class="btn sec" id="backup">バックアップ</button>
+    <button class="btn sec" id="chpw">パスワードを変える</button>`;
+  $("#back").onclick = home;
+  $("#lim").onchange = e=>{ S.settings.limit = +e.target.value; save(); parentMenu(); };
+  $("#ext").onchange = e=>{ S.settings.extend = +e.target.value; save(); parentMenu(); };
+  $("#words").onclick = wordList;
+  $("#ur").onchange = e=>{ S.settings.unlockRate = +e.target.value; save(); parentMenu(); };
+  $("#unlockAll").onclick = ()=>{ S.unlocked = BASE.length; save(); rebuild(); parentMenu(); };
+  $("#recheck").onclick = ()=>{ S.placed = false; save(); home(); };
+  $("#backup").onclick = backupScreen;
+  $("#chpw").onclick = ()=>{
+    $("#app").innerHTML = `<div class="bar"><button class="link" id="back">‹ もどる</button><span class="chip">パスワードを変える</span></div>${pwFields("新しいパスワード","この内容で変える")}`;
+    $("#back").onclick = parentMenu;
+    wirePwFields(parentMenu);
+  };
+}
+
+/* ---------- 単語の管理 ---------- */
+function wordList(){
+  const rows = ALL.map(w=>{
+    const r = S.words[w.b], off = !!S.off[w.b];
+    return `<div class="wrow ${off?"off":""}">
+      <div><b>${esc(w.b)}</b> – ${esc(w.p)} – ${esc(w.pp)}<br><small>${SP_INFO[species(w)].name}　${esc(w.m)}　なつき度 ${r?r.nk:0}${off?"　お休み中":""}${S.custom[w.b]?"　編集済み":""}</small></div>
+      <div class="wbtn"><button class="mini" data-edit="${esc(w.b)}">編集</button><button class="mini" data-off="${esc(w.b)}">${off?"戻す":"お休み"}</button></div>
+    </div>`;
+  }).join("");
+  $("#app").innerHTML = `
+    <div class="bar"><button class="link" id="back">‹ もどる</button><span class="chip">単語の管理</span></div>
+    <button class="btn" id="add">単語を追加する</button>
+    <div class="err" id="err"></div>
+    <div class="wl">${rows}</div>`;
+  $("#back").onclick = parentMenu;
+  $("#add").onclick = ()=>wordForm(null);
+  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick = ()=>wordForm(b.dataset.edit));
+  document.querySelectorAll("[data-off]").forEach(b=>b.onclick = ()=>{
+    const k = b.dataset.off;
+    if(!S.off[k] && W.length <= 4){ $("#err").textContent = "出題中の単語は4語以上必要です"; return; }
+    if(S.off[k]) delete S.off[k]; else S.off[k] = true;
+    save(); rebuild(); wordList();
+  });
+}
+const GR_P = {past:"過去形（yesterday など）", agree:"時制の一致"};
+const GR_PP = {perfect:"現在完了", pastPerfect:"過去完了", passive:"受け身", modalPassive:"助動詞＋受け身", perfectPassive:"現在完了の受け身", participle:"分詞が名詞を説明"};
+function exFields(prefix, title, ex, grs){
+  ex = ex || {};
+  return `<div class="q"><h2>${title}（なくても遊べます）</h2>
+    <label class="fl">例文（答えの場所を {} にする）<input class="type sm" id="${prefix}t" value="${esc(ex.t||"")}" placeholder="We {} to Kyoto last year."></label>
+    <label class="fl">日本語訳<input class="type sm" id="${prefix}ja" value="${esc(ex.ja||"")}"></label>
+    <label class="fl">手がかりの語（カンマ区切り）<input class="type sm" id="${prefix}c" value="${esc((ex.c||[]).join(", "))}" placeholder="last year"></label>
+    <label class="fl">文法<select class="sel" id="${prefix}g">${Object.entries(grs).map(([k,v])=>`<option value="${k}" ${ex.g===k?"selected":""}>${v}</option>`).join("")}</select></label>
+  </div>`;
+}
+function wordForm(key){
+  const w = key ? BY[key] : null;
+  const isBase = key && BASE.some(x=>x.b===key);
+  $("#app").innerHTML = `
+    <div class="bar"><button class="link" id="back">‹ もどる</button><span class="chip">${w?"単語を編集":"単語を追加"}</span></div>
+    <div class="field"><div class="reveal" id="prev"></div><div class="who" id="prevName"></div></div>
+    <div class="q"><h2>形と意味</h2>
+      <label class="fl">原形<input class="type sm" id="fb0" value="${esc(w?w.b:"")}" ${w?"disabled":""} autocapitalize="off" autocorrect="off" spellcheck="false"></label>
+      <div class="pair">
+        <label>過去形<input class="type sm" id="fp" value="${esc(w?w.p:"")}" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
+        <label>過去分詞<input class="type sm" id="fpp" value="${esc(w?w.pp:"")}" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
+      </div>
+      <label class="fl">過去分詞の別解答（カンマ区切り。例：gotten）<input class="type sm" id="falt" value="${esc(w?(w.ppAlt||[]).join(", "):"")}" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
+      <label class="fl">意味<input class="type sm" id="fm" value="${esc(w?w.m:"")}"></label>
+    </div>
+    ${exFields("pe","過去の例文", w&&w.pe, GR_P)}
+    ${exFields("ppe","過去分詞の例文", w&&w.ppe, GR_PP)}
+    <div class="err" id="err"></div>
+    <button class="btn" id="save">保存する</button>
+    ${isBase && S.custom[key] ? `<button class="btn sec" id="reset">最初の内容に戻す</button>` : ""}`;
+  $("#back").onclick = wordList;
+  const val = id=>$(id).value.trim();
+  const lower = s=>s.toLowerCase().replace(/\s+/g," ");
+  const preview = ()=>{
+    const f = {b:lower(val("#fb0")), p:lower(val("#fp")), pp:lower(val("#fpp"))};
+    if(f.b && f.p && f.pp){
+      const sp = species(f);
+      $("#prev").innerHTML = [0,1,2].map(s=>`<figure>${monsterSVG(sp,s,"",[f.b,f.p,f.pp][s])}<figcaption>${esc([f.b,f.p,f.pp][s])}</figcaption></figure>`).join("");
+      $("#prevName").textContent = SP_INFO[sp].name;
+    }else{ $("#prev").innerHTML = ""; $("#prevName").textContent = "3つの形を入れると種族がわかります"; }
+  };
+  document.querySelectorAll("input,select").forEach(x=>x.addEventListener("input", ()=>{ $("#err").textContent = ""; preview(); }));
+  preview();
+  if($("#reset")) $("#reset").onclick = ()=>{ delete S.custom[key]; save(); rebuild(); wordList(); };
+  $("#save").onclick = ()=>{
+    const b = lower(val("#fb0")), p = lower(val("#fp")), pp = lower(val("#fpp")), m = val("#fm");
+    const alt = val("#falt").split(",").map(s=>lower(s.trim())).filter(Boolean);
+    const err = s=>{ $("#err").textContent = s; };
+    if(!b || !p || !pp || !m) return err("原形・過去形・過去分詞・意味は必ず入れてください");
+    if(![b,p,pp,...alt].every(s=>/^[a-z' ]+$/.test(s))) return err("形は英語のアルファベットで入れてください");
+    if(!w && BY[b]) return err(`${b} はすでに入っています`);
+    const ex = (prefix, name)=>{
+      const t = val(`#${prefix}t`);
+      if(!t) return null;
+      if(t.split("{}").length !== 2) throw `${name}には {} を1つだけ入れてください`;
+      const c = val(`#${prefix}c`).split(",").map(s=>s.trim()).filter(Boolean);
+      const miss = c.find(x=>!highlight(t.replace("{}","___"), [x]).includes("<mark"));
+      if(miss) throw `${name}に手がかりの語「${miss}」が見つかりません`;
+      return {t, ja:val(`#${prefix}ja`), c, g:$(`#${prefix}g`).value};
+    };
+    let pe, ppe;
+    try{ pe = ex("pe","過去の例文"); ppe = ex("ppe","過去分詞の例文"); }catch(e){ return err(e); }
+    const obj = {b, p, pp, m};
+    if(alt.length) obj.ppAlt = alt;
+    if(pe) obj.pe = pe;
+    if(ppe) obj.ppe = ppe;
+    S.custom[b] = obj; save(); rebuild(); sfx("ok"); wordList();
+  };
+}
+
+/* ---------- バックアップ ---------- */
+function backupScreen(){
+  $("#app").innerHTML = `
+    <div class="bar"><button class="link" id="back">‹ もどる</button><span class="chip">バックアップ</span></div>
+    <div class="q"><h2>書き出す</h2>
+      <p style="margin:0">進み具合、追加した単語、設定、パスワードをまとめて1つのファイルに保存します。機種変更のときもこのファイルで引き継げます。</p>
+      <button class="btn" id="exp">ファイルに書き出す</button><div class="err" id="err1"></div></div>
+    <div class="q"><h2>読み込む</h2>
+      <p style="margin:0">書き出したファイルを選ぶと、今のデータがそのファイルの内容に置きかわります。パスワードも書き出したときのものに戻ります。</p>
+      <input type="file" id="file" accept=".json,application/json" style="margin-top:10px">
+      <div class="err" id="err2"></div><div id="conf"></div></div>`;
+  $("#back").onclick = parentMenu;
+  $("#exp").onclick = async ()=>{
+    const d = new Date();
+    const name = `verb-monsters-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}.json`;
+    const data = JSON.stringify({app:"verbMonsters", v:1, exported:d.toISOString(), state:S});
+    let dl = null;
+    try{ if(window.claude && window.claude.use) dl = await window.claude.use("downloads"); }catch(e){ dl = null; }
+    if(dl){
+      try{ await dl.save({filename:name, data}); $("#err1").textContent = ""; }
+      catch(e){ if(e && e.code!=="declined") $("#err1").textContent = "書き出せませんでした。もう一度お試しください"; }
+    }else{
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([data], {type:"application/json"}));
+      a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    }
+  };
+  $("#file").onchange = e=>{
+    const f = e.target.files[0]; if(!f) return;
+    const rd = new FileReader();
+    rd.onload = ()=>{
+      let o;
+      try{ o = JSON.parse(rd.result); }catch(x){ $("#err2").textContent = "このファイルは読み込めません（形式がちがいます）"; return; }
+      if(!o || o.app!=="verbMonsters" || !o.state || !o.state.words){ $("#err2").textContent = "このアプリのバックアップファイルではありません"; return; }
+      $("#err2").textContent = "";
+      $("#conf").innerHTML = `<p style="margin:10px 0 0">${esc((o.exported||"").slice(0,10))} に書き出したデータです。読み込みますか？</p><button class="btn" id="imp">読み込む</button>`;
+      $("#imp").onclick = ()=>{
+        S = o.state;
+        S.settings = Object.assign({music:true, sfx:true, limit:60, extend:30}, S.settings||{});
+        S.custom = S.custom || {}; S.off = S.off || {}; S.days = S.days || {};
+        S.story = S.story || {}; S.storySeen = S.storySeen || {}; S.unlocked = S.unlocked || 30;
+        save(); rebuild(); home();
+      };
+    };
+    rd.readAsText(f);
+  };
+}
+
+if("serviceWorker" in navigator && location.protocol==="https:"){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+home();
+</script>
+</body>
+</html>
